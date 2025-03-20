@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react'
 import logo from "../../assets/icon/mainLogo.svg";
 
 function Navbar() {
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
-    if(storedUsername) {
+    const storedPassword = localStorage.getItem("password");
+
+    console.log("username:", storedUsername);
+    console.log("password:", storedPassword);
+    if(storedUsername && storedPassword) {
       setUsername(storedUsername);
+      setPassword(storedPassword);
     };
+
   }, []);
+
   return (
-    <nav class="navbar bg-white border-bottom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">
+    <nav className="navbar bg-white border-bottom">
+      <div className="container-fluid">
+        <a className="navbar-brand" href={username && password ? "/dashboard" : "/"}>
           <img src={logo} alt="logo" />
         </a>
         <div className='user'>

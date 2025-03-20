@@ -3,24 +3,58 @@ import logo from "../../assets/icon/main-logo.svg";
 import {Link, useNavigate} from 'react-router-dom'
 import Signup from "../signUp/SignUp";
 import $, { event } from "jquery";
+import axios from "axios";
+import Alert from 'react-bootstrap/Alert';
 
 
 function SignIn({FormHandle}) {
   const [User, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
     
-  function handleLogin(e){ 
+  async function handleLogin(e){ 
+    e.preventDefault();
+    setError(null);
+
     if(!User || !password){
-      alert("Please enter email and password.");
+      alert("Please enter username and password.");
       return;
     }
-    e.preventDefault();
-    console.log(User,password);
-    localStorage.setItem("username", User)
-    setUser("");
-    setPassword("");
-    navigate("/dashboard");
+    const requestBody = {
+      username: User,
+      password: password,
+    };
+
+    try{
+      const response = await axios.post("http://207.180.203.98:5030/api/signin", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Signin Successfull: ", response.data);
+
+      if(response) {
+        localStorage.setItem("authToken", requestBody.username);
+      };
+
+
+      if(requestBody) {
+        localStorage.setItem("username", requestBody.username);
+        localStorage.setItem("password", requestBody.password);
+      }else{
+        console.warn("username is missing in API response");
+      }
+
+      setUser("");
+      setPassword("");
+      navigate("/dashboard");
+    } catch(err) {
+      console.error("Sign-in error:", err);
+
+      console.log("Response Data: ", err.response?.data);
+      setError(err.response?.data?.message || "Sign-in failed. please try again");
+    };
   }
   return (
     <>
@@ -29,6 +63,11 @@ function SignIn({FormHandle}) {
       </div>
       <div className="col-md-6 main-form">
           <h2>Sign In</h2>
+          {error && (
+            <Alert variant="danger" className="py-1">
+              {error}
+            </Alert>
+          )}
           <form onSubmit={handleLogin}>
               <div>
                   <label htmlFor="UserName">User Name</label>

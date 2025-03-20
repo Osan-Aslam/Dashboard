@@ -564,6 +564,15 @@ form .signin-btn:hover {
   background-color: #f0f0f0;
 }
 
+.main-form .alert-danger{
+  color: #FF5252;
+  font-size: 14px;
+}
+
+.nav-pills .logout:hover{
+  background-color: #ff8a8a;
+}
+
 @media screen and (max-width: 992px){
   .tab-pane .dashboard {
     display: grid;

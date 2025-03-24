@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {BrowserRouter as Router, Routes, Route, useLocation, Outlet, createBrowserRouter, RouterProvider} from "react-router-dom";
 import SignIn from "./pages/signIn/SignIn";
 import Signup from "./pages/signUp/SignUp";
@@ -13,12 +13,17 @@ import AddBacklink from "./pages/Dasboard/Backlinks/AddBacklink";
 import AddNewTeam from "./pages/Dasboard/Team/AddNewTeam";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BacklinkFilter from "./pages/Dasboard/Backlinks/BacklinkFilter";
+import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
+import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
+import axios from "axios";
 
 
-function MainLayout() {
+function MainLayout({members}) {
   const location = useLocation();
   const hideNavbar = ["/signin", "/signup", "/"].includes(location.pathname);
   const hideSidebar = ["/signin", "/signup", "/"].includes(location.pathname);
+  
+  
 
   return (
     <>
@@ -39,70 +44,102 @@ function MainLayout() {
   );
 }
 
+function App() {
+  const [members, setMember] = useState([]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try{
+        const response = await axios.get("http://207.180.203.98:5030/api/team-members");
+        setMember(response.data);
+      } catch(error) {
+        console.error("Error fetching members", error);
+      }
+    };
+    fetchMembers();
+  }, []);
+
+  const handleMemberAdded = (newMember) => {
+    setMember([...members, newMember]);
+  };
+
+  
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
       {
-        path: "/",
-        element: <SignIn/>
+        element: <PublicRoute />,
+        children:[
+          {
+            path: "/",
+            element: <SignIn/>
+          },
+          {
+            path: "signin",
+            element: <SignIn/>,
+          },
+          {
+            path: "signup",
+            element: <Signup/>,
+          },
+        ],
       },
       {
-        path: "signin",
-        element: <SignIn/>,
+        element: <ProtectRoute />,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard/>,
+          },
+          {
+            path: "navbar",
+            element: <Navbar/>,
+          },
+          {
+            path: "backlink",
+            element: <Backlink/>,
+          },
+          {
+            path: "addProject",
+            element: <AddProject/>,
+          },
+          {
+            path: "team",
+            element: <Team members={members} onMemberAdded={handleMemberAdded}/>,
+          },
+          {
+            path: "sidebar",
+            element: <Sidebar/>,
+          },
+          {
+            path: "addBacklink",
+            element: <AddBacklink/>,
+          },
+          {
+            path: "project",
+            element: <Project/>,
+          },
+          {
+            path: "addNewTeam",
+            element: <AddNewTeam/>
+          },
+          {
+            path: "backlinkFilter",
+            element: <BacklinkFilter/>
+          },
+        ],
       },
-      {
-        path: "signup",
-        element: <Signup/>,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard/>,
-      },
-      {
-        path: "navbar",
-        element: <Navbar/>,
-      },
-      {
-        path: "backlink",
-        element: <Backlink/>,
-      },
-      {
-        path: "addProject",
-        element: <AddProject/>,
-      },
-      {
-        path: "team",
-        element: <Team/>,
-      },
-      {
-        path: "sidebar",
-        element: <Sidebar/>,
-      },
-      {
-        path: "addBacklink",
-        element: <AddBacklink/>,
-      },
-      {
-        path: "project",
-        element: <Project/>,
-      },
-      {
-        path: "addNewTeam",
-        element: <AddNewTeam/>
-      },
-      {
-        path: "backlinkFilter",
-        element: <BacklinkFilter/>
-      },
-    ]
-  }
+    ],
+  },
 ]);
 
-function App() {
-    return (
-      <RouterProvider router={router}/>
-    )
+return (
+  <RouterProvider router={router}/>
+  )
 }
-export default App
+
+
+export default App;

@@ -570,7 +570,25 @@ form .signin-btn:hover {
 }
 
 .nav-pills .logout:hover{
-  background-color: #ff8a8a;
+  background-color: #feadad;
+}
+
+.uploadImage{
+  position: relative;
+}
+
+.uploadImage p{
+  color: #0c8ce9;
+}
+
+.uploadImage .uploadFile {
+  position: absolute;
+  top: 0px;
+  right: 271px;
+  height: 91px;
+  opacity: 0;
+  cursor: pointer;
+  width: 104px;
 }
 
 @media screen and (max-width: 992px){

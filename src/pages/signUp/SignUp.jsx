@@ -30,8 +30,11 @@ function Signup({FormHandle}) {
           "Content-Type": "application/json",
         },
       });
-
-      console.log("Signup successfull: ", response.data);
+      
+      if(response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        navigate("/dashboard");
+      };
 
       if(requestBody) {
         localStorage.setItem("username", requestBody.username);
@@ -40,7 +43,6 @@ function Signup({FormHandle}) {
 
       setUser("");
       setPassword("");
-      navigate("/dashboard")
 
     } catch(err) {
       console.error("Signup error:", err);

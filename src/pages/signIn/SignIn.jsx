@@ -7,7 +7,7 @@ import axios from "axios";
 import Alert from 'react-bootstrap/Alert';
 
 
-function SignIn({FormHandle}) {
+function SignIn() {
   const [User, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -32,23 +32,14 @@ function SignIn({FormHandle}) {
           "Content-Type": "application/json",
         },
       });
-      console.log("Signin Successfull: ", response.data);
-
-      if(response) {
-        localStorage.setItem("authToken", requestBody.username);
-      };
-
 
       if(requestBody) {
         localStorage.setItem("username", requestBody.username);
         localStorage.setItem("password", requestBody.password);
-      }else{
-        console.warn("username is missing in API response");
       }
-
+      navigate("/dashboard");
       setUser("");
       setPassword("");
-      navigate("/dashboard");
     } catch(err) {
       console.error("Sign-in error:", err);
 
@@ -71,7 +62,7 @@ function SignIn({FormHandle}) {
           <form onSubmit={handleLogin}>
               <div>
                   <label htmlFor="UserName">User Name</label>
-                  <input className="form-control" id="text" type="email" placeholder="Enter username" onChange={(e) => setUser(e.target.value)} value={User} />
+                  <input className="form-control" id="text" type="text" placeholder="Enter username" onChange={(e) => setUser(e.target.value)} value={User} />
               </div>
               <div className="mt-3">
                   <label htmlFor="UserName">Password</label>

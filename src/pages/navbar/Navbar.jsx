@@ -9,8 +9,6 @@ function Navbar() {
     const storedUsername = localStorage.getItem("username");
     const storedPassword = localStorage.getItem("password");
 
-    console.log("username:", storedUsername);
-    console.log("password:", storedPassword);
     if(storedUsername && storedPassword) {
       setUsername(storedUsername);
       setPassword(storedPassword);

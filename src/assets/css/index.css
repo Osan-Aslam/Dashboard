@@ -34,7 +34,8 @@ form .signin-btn {
   padding: 5px 0px 8px 0px;
 }
 
-form .signin-btn:active, .fetch-btn {
+form .signin-btn:active,
+.fetch-btn {
   transform: scale(0.98);
 }
 
@@ -320,7 +321,8 @@ form .signin-btn:hover {
   color: #005CCC;
 }
 
-.table .btn, .table .btn {
+.table .btn,
+.table .btn {
   display: flex;
   align-items: center;
   margin: 0px 3px;
@@ -409,12 +411,19 @@ form .signin-btn:hover {
   cursor: pointer;
 }
 
+.card .icon.delete-icon{
+  background-color: #FF4A4A;
+}
+
 .card {
   border-radius: 10px !important;
 }
 
 .card img {
   border-radius: 50%;
+  height: 85px;
+  width: 88px;
+  object-fit: cover;
 }
 
 .dropdown .cross {
@@ -500,7 +509,7 @@ form .signin-btn:hover {
   font-size: 11px;
 }
 
-.table td{
+.table td {
   border: none;
 }
 
@@ -537,11 +546,11 @@ form .signin-btn:hover {
   cursor: pointer;
 }
 
-.add-backlink .dropdown-toggle:active{
+.add-backlink .dropdown-toggle:active {
   border: 1px solid #CBD1DC;
 }
 
-.nav-pills .logout{
+.nav-pills .logout {
   background-color: #FFE7E7;
   color: #FF5252;
   font-weight: 400;
@@ -549,35 +558,42 @@ form .signin-btn:hover {
   bottom: 10px;
 }
 
-.user p{
+.user p {
   color: #919AAA;
   font-size: 15px;
   font-weight: 500;
 }
 
-.nav-pills .nav-link.active:hover{
+.nav-pills .nav-link.active:hover {
   background-color: #0094ff !important;
 }
 
-.nav-pills .nav-link:hover{
+.nav-pills .nav-link:hover {
   color: #000;
   background-color: #f0f0f0;
 }
 
-.main-form .alert-danger{
+.main-form .alert-danger {
   color: #FF5252;
   font-size: 14px;
 }
 
-.nav-pills .logout:hover{
+.nav-pills .logout:hover {
   background-color: #feadad;
 }
 
-.uploadImage{
+.uploadImage {
   position: relative;
 }
 
-.uploadImage p{
+.uploadImage img {
+  width: 90px;
+  height: 87px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.uploadImage p {
   color: #0c8ce9;
 }
 
@@ -591,11 +607,44 @@ form .signin-btn:hover {
   width: 104px;
 }
 
-@media screen and (max-width: 992px){
+.Designation {
+  margin-top: 2px;
+}
+
+.Designation .dropdown-toggle {
+  border: 1px solid #ddd;
+  color: #919AAA;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.Designation .dropdown-toggle:hover {
+  border: 1px solid #ddd;
+}
+
+.Designation label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.card .card-body p {
+  color: #919AAA;
+}
+
+.card .card-body span{
+  color: #000;
+}
+
+.breadcrumb-item a{
+  text-decoration: none;
+  color: #000;
+}
+@media screen and (max-width: 992px) {
   .tab-pane .dashboard {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
   }
+
   .main-form form {
     width: 90%;
   }

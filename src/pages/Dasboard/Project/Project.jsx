@@ -32,20 +32,20 @@ function Project() {
           </div>
           <div className='d-flex align-items-center viewTime'>
             <span>View By Duration:</span>
-              <div class="dropdown">
-                <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                  <li class="dropdown-item">Last 7 days</li>
-                  <li class="dropdown-item">Last 30 days</li>
-                  <li class="dropdown-item">Last 3 month</li>
-                  <li class="dropdown-item">Custom Duration</li>
+              <div className="dropdown">
+                <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
+                <ul className="dropdown-menu dropdown-menu-dark">
+                  <li className="dropdown-item">Last 7 days</li>
+                  <li className="dropdown-item">Last 30 days</li>
+                  <li className="dropdown-item">Last 3 month</li>
+                  <li className="dropdown-item">Custom Duration</li>
                 </ul>
               </div>
             </div>
         </div>
       </div>
-      <div class="table-responsive px-3">
-        <table class="table">
+      <div className="table-responsive px-3">
+        <table className="table">
           <thead>
             <tr>
                 <th scope="col">Our Projects</th>
@@ -160,22 +160,22 @@ function Project() {
         </table>
         <div className='d-flex align-items-center justify-content-between'>
           <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item"><a class="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
-              <li class="page-item"><a class="page-link active" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">Next <IoIosArrowForward /></a></li>
+            <ul className="pagination">
+              <li className="page-item"><a className="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
+              <li className="page-item"><a className="page-link active" href="#">1</a></li>
+              <li className="page-item"><a className="page-link" href="#">2</a></li>
+              <li className="page-item"><a className="page-link" href="#">3</a></li>
+              <li className="page-item"><a className="page-link" href="#">Next <IoIosArrowForward /></a></li>
             </ul>
           </nav>
           <div className='d-flex align-items-center viewTime'>
             <span>Show:</span>
-            <div class="dropdown">
-              <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
-              <ul class="dropdown-menu dropdown-menu-dark">
-                  <li class="dropdown-item">20 Per Page</li>
-                  <li class="dropdown-item">30 Per Page</li>
-                  <li class="dropdown-item">40 Per Page</li>
+            <div className="dropdown">
+              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
+              <ul className="dropdown-menu dropdown-menu-dark">
+                  <li className="dropdown-item">20 Per Page</li>
+                  <li className="dropdown-item">30 Per Page</li>
+                  <li className="dropdown-item">40 Per Page</li>
               </ul>
             </div>
           </div>

@@ -10,11 +10,13 @@ import Backlink from "./pages/Dasboard/Backlinks/Backlink";
 import Team from "./pages/Dasboard/Team/Team";
 import Sidebar from "./pages/common/Sidebar";
 import AddBacklink from "./pages/Dasboard/Backlinks/AddBacklink";
-import AddNewTeam from "./pages/Dasboard/Team/AddNewTeam";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import AddMember from "./pages/Dasboard/Team/AddMember";
+import UpdateMember from "./pages/Dasboard/Team/UpdateMember";
+import ViewMember from "./pages/Dasboard/Team/ViewMember";
 import BacklinkFilter from "./pages/Dasboard/Backlinks/BacklinkFilter";
 import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
 import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
 
@@ -68,7 +70,7 @@ function App() {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <MainLayout members={members}/>,
     children: [
       {
         element: <PublicRoute />,
@@ -123,13 +125,21 @@ const router = createBrowserRouter([
             element: <Project/>,
           },
           {
-            path: "addNewTeam",
-            element: <AddNewTeam/>
+            path: "addMember",
+            element: <AddMember/>,
           },
           {
             path: "backlinkFilter",
-            element: <BacklinkFilter/>
+            element: <BacklinkFilter/>,
           },
+          {
+            path: "updateMember/:id",
+            element: <UpdateMember/>
+          },
+          {
+            path: "viewMember/:id",
+            element: <ViewMember />
+          }
         ],
       },
     ],

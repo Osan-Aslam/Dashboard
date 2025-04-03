@@ -21,7 +21,7 @@ function Sidebar() {
   });
   return (
     <>
-      <div class="nav flex-column nav-pills pt-4">
+      <div className="nav flex-column nav-pills pt-4">
         <Link to="/dashboard" className={"nav-link active"}>Dashboard</Link>
         <Link to="/backlink" className="nav-link">Backlinks</Link>
         <Link to="/project" className="nav-link">Our Projects</Link>

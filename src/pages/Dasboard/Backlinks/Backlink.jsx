@@ -24,23 +24,23 @@ function Backlink() {
             <div className='d-lg-flex align-items-center'>
                 <div className='d-flex align-items-center viewTime'>
                     <span>Sort by:</span>
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Low to high price</button>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li class="dropdown-item">Low to high price</li>
-                            <li class="dropdown-item">High to low price</li>
-                            <li class="dropdown-item">Deal traffic Low to High</li>
-                            <li class="dropdown-item">Deal traffic High to Low</li>
-                            <li class="dropdown-item">Deal US traffic Low to High</li>
-                            <li class="dropdown-item">Live link traffic High to Low</li>
-                            <li class="dropdown-item">Live link traffic Low to High</li>
+                    <div className="dropdown">
+                        <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Low to high price</button>
+                        <ul className="dropdown-menu dropdown-menu-dark">
+                            <li className="dropdown-item">Low to high price</li>
+                            <li className="dropdown-item">High to low price</li>
+                            <li className="dropdown-item">Deal traffic Low to High</li>
+                            <li className="dropdown-item">Deal traffic High to Low</li>
+                            <li className="dropdown-item">Deal US traffic Low to High</li>
+                            <li className="dropdown-item">Live link traffic High to Low</li>
+                            <li className="dropdown-item">Live link traffic Low to High</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive px-1">
-            <table class="table">
+        <div className="table-responsive px-1">
+            <table className="table">
                 <thead>
                     <tr>
                         <th scope="col">Our Projects</th>
@@ -366,22 +366,22 @@ function Backlink() {
             </table>
             <div className='d-flex align-items-center justify-content-between'>
               <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item"><a class="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
-                  <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">Next <IoIosArrowForward /></a></li>
+                <ul className="pagination">
+                  <li className="page-item"><a className="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
+                  <li className="page-item"><a className="page-link active" href="#">1</a></li>
+                  <li className="page-item"><a className="page-link" href="#">2</a></li>
+                  <li className="page-item"><a className="page-link" href="#">3</a></li>
+                  <li className="page-item"><a className="page-link" href="#">Next <IoIosArrowForward /></a></li>
                 </ul>
               </nav>
               <div className='d-flex align-items-center viewTime'>
                 <span>Show:</span>
-                <div class="dropdown">
-                  <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
-                  <ul class="dropdown-menu dropdown-menu-dark">
-                      <li class="dropdown-item">20 Per Page</li>
-                      <li class="dropdown-item">30 Per Page</li>
-                      <li class="dropdown-item">40 Per Page</li>
+                <div className="dropdown">
+                  <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
+                  <ul className="dropdown-menu dropdown-menu-dark">
+                      <li className="dropdown-item">20 Per Page</li>
+                      <li className="dropdown-item">30 Per Page</li>
+                      <li className="dropdown-item">40 Per Page</li>
                   </ul>
                 </div>
               </div>

@@ -94,18 +94,18 @@ function AddProject() {
       <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
         <form className='w-100'>
           <div>
-            <label for="formGroupExampleInput" class="form-label">Project Name</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter project name" />
+            <label for="formGroupExampleInput" className="form-label">Project Name</label>
+            <input type="text" className="form-control" id="formGroupExampleInput" placeholder="Enter project name" />
           </div>
           <div>
-            <label for="formGroupExampleInput2" class="form-label">Project URL</label>
-            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Enter project url" />
+            <label for="formGroupExampleInput2" className="form-label">Project URL</label>
+            <input type="text" className="form-control" id="formGroupExampleInput2" placeholder="Enter project url" />
           </div>
           <div>
-            <label for="formGroupExampleInput2" class="form-label">Fetch Pages From Sitemap URL</label>
+            <label for="formGroupExampleInput2" className="form-label">Fetch Pages From Sitemap URL</label>
             <div className='d-flex fetch-page'>
-              <input type="text" class="form-control" value={siteUrl} onChange={(e) => setSiteUrl(e.target.value)} placeholder="Enter sitemap url" aria-label="Recipient's username" aria-describedby="button-addon2" />
-              <button class="btn fetch-btn" type="button" id="button-addon2" onClick={fetchSitemap}>Fetch Pages</button>
+              <input type="text" className="form-control" value={siteUrl} onChange={(e) => setSiteUrl(e.target.value)} placeholder="Enter sitemap url" aria-label="Recipient's username" aria-describedby="button-addon2" />
+              <button className="btn fetch-btn" type="button" id="button-addon2" onClick={fetchSitemap}>Fetch Pages</button>
             </div>
           </div>
           <div className='fetchPages p-2 mt-3'>
@@ -130,7 +130,7 @@ function AddProject() {
             </div>
           </div>
           <div>
-            <label for="formGroupExampleInput2" class="form-label">Anchor Text</label>
+            <label for="formGroupExampleInput2" className="form-label">Anchor Text</label>
             <div className='border p-2 typeTag'>
               {tags.map((tag, index) => (
                 <span className='tagName' key={index} contentEditable={false} onClick={() => removeTag(index)}>{tag} <RxCross2 className='cross' /></span>

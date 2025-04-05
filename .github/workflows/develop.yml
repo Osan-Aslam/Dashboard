@@ -21,7 +21,7 @@ jobs:
         screen -S react_app -X quit || echo "No existing screen session to kill."
 
         # Clone repo if not already cloned
-        cd /root/Dashboard || git clone https://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@github.com/Osan-Aslam/Dashboard.git /root/Dashboard
+        cd /root/Dashboard || git clone https://Ehtisham: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@github.com/Osan-Aslam/Dashboard.git /root/Dashboard
 
         # Pull latest changes
         cd /root/Dashboard

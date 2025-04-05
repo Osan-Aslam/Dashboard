@@ -66,7 +66,7 @@ function SignIn() {
               </div>
               <div className="mt-3">
                   <label htmlFor="UserName">Password</label>
-                  <input className="form-control" id="Password" type="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} value={password} />
+                  <input className="form-control" id="Password" type="password" placeholder="Enter asdlashdklajsdhkasljhdasPassword" onChange={(e) => setPassword(e.target.value)} value={password} />
               </div>
               <button className="btn signin-btn" onClick={handleLogin}>Sign In</button>
           </form>

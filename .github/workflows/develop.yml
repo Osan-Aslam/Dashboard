@@ -1,0 +1,38 @@
+name: Deployment - Dev
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Deploy Application to Server
+      run: |
+        sshpass -p "NGs39o8R3u0w3c1axuq2RdG" ssh -o StrictHostKeyChecking=no root@207.180.203.98 << 'EOF'
+        
+        # Kill existing screen session (if exists)
+        screen -S react_app -X quit || echo "No existing screen session to kill."
+
+        # Clone repo if not already cloned
+        cd /root/Dashboard || git clone https://Ehtisham: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@github.com/Osan-Aslam/Dashboard.git /root/Dashboard
+
+        # Pull latest changes
+        cd /root/Dashboard
+        git stash
+        git pull origin develop
+
+        # Install dependencies
+        npm install
+
+        # Start in screen session
+        screen -dmS react_app npm start
+
+        echo 'React app started in detached screen session.'
+        EOF

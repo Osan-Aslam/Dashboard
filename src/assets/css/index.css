@@ -584,6 +584,8 @@ form .signin-btn:hover {
 
 .uploadImage {
   position: relative;
+  width: fit-content;
+  margin: auto;
 }
 
 .uploadImage img {
@@ -600,7 +602,7 @@ form .signin-btn:hover {
 .uploadImage .uploadFile {
   position: absolute;
   top: 0px;
-  right: 271px;
+  right: 0px;
   height: 91px;
   opacity: 0;
   cursor: pointer;
@@ -639,6 +641,7 @@ form .signin-btn:hover {
   text-decoration: none;
   color: #000;
 }
+
 @media screen and (max-width: 992px) {
   .tab-pane .dashboard {
     display: grid;

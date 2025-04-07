@@ -21,9 +21,10 @@ function ViewMember() {
     const fetchMember = async () => {
       try {
         const response = await axios.get(`http://207.180.203.98:5030/api/team-members/${id}`);
+        // console.log("API Response", response.data);
         if (response.data) {
-          const profilePath = response.data.profilePicture ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePicture}` : defaultImage;
-          console.log("path:", profilePath);
+          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : defaultImage;
+          // console.log("path:", profilePath);
           setMember({
             memberName: response.data.memberName || "N/A",
             designation: response.data.designation || "N/A",
@@ -44,12 +45,8 @@ function ViewMember() {
   return (
     <>
       <Breadcrumb className='p-2 pb-0'>
-        <Breadcrumb.Item>
-          <Link to="/team">Team</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item active>
-          {member.memberName}
-        </Breadcrumb.Item>
+        <Breadcrumb.Item href='/team'>Team</Breadcrumb.Item>
+        <Breadcrumb.Item active>{member.memberName}</Breadcrumb.Item>
       </Breadcrumb>
       <div>
         <Card className='flex-row justify-content-between p-3'>

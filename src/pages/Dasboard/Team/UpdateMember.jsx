@@ -8,6 +8,7 @@ import axios from 'axios';
 function UpdateMember() {
   const {id} = useParams();
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState("");
   const [member, setMember] = useState({
     memberName: "",
     designation: "",
@@ -22,7 +23,7 @@ function UpdateMember() {
       try {
         const response = await axios.get(`http://207.180.203.98:5030/api/team-members/${id}`);
         if (response.data) {
-          const profilePath = response.data.profilePicture ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePicture}` : null;
+          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : null;
           setMember({
             memberName: response.data.memberName || "",
             designation: response.data.designation || "",
@@ -30,8 +31,8 @@ function UpdateMember() {
             basicSalary: response.data.basicSalary || "",
             profilePicture: profilePath || uploadImage,
           });
-          console.log("Profile Path:", profilePath)
-          console.log(response.data);
+          // console.log("Profile Path:", profilePath)
+          // console.log(response.data);
           if(profilePath) {
             setImage(profilePath);
           }
@@ -47,20 +48,20 @@ function UpdateMember() {
     fetchMember();
   }, [id]);
 
-  const fetchProfilePicture = async (profilePictureUrl) => {
-    try {
-      const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
-        headers: {
-          'Accept': '*/*'
-        },
-        responseType: 'blob',
-      });
-      return URL.createObjectURL(response.data);
-    } catch(error) {
-      console.error("Error fetching profile:" ,error);
-      return null;
-    }
-  };
+  // const fetchProfilePicture = async (profilePictureUrl) => {
+  //   try {
+  //     const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
+  //       headers: {
+  //         'Accept': '*/*'
+  //       },
+  //       responseType: 'blob',
+  //     });
+  //     return URL.createObjectURL(response.data);
+  //   } catch(error) {
+  //     console.error("Error fetching profile:" ,error);
+  //     return null;
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,7 +88,7 @@ function UpdateMember() {
     formData.append("BasicSalary", Number(member.basicSalary) || 0);
     formData.append("profilePicture", image);
 
-    console.log("Sending data:", Object.fromEntries(formData.entries()));
+    // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
     try {
       const response = await axios.patch(
@@ -101,9 +102,13 @@ function UpdateMember() {
         }
       );
 
-      console.log("Update Response:", response.data, response.status);
-      alert("Member updated successfully!");
-      navigate("/team");
+      // console.log("Update Response:", response.data, response.status);
+      setSuccessMessage("Member updated successfully!");
+      // Clear message after 5 seconds
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/team");
+      }, 2000);
     } catch (error) {
       console.error("Error updating member:", error.response?.data || error.message);
       alert("Failed to update member. Please try again.");
@@ -114,6 +119,11 @@ function UpdateMember() {
     <>
       <h3 className='ms-2 mt-3'>Update Team Member</h3>
         <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
+          {successMessage && (
+            <div className="alert alert-success p-2 col-6 mx-auto text-center">
+              {successMessage}
+            </div>
+          )}
           <form className='w-100' onSubmit={handleSubmit}>
             <div className='text-center uploadImage'>
               <img src={member.profilePicture || uploadImage} alt="" className='rounded-full'/>

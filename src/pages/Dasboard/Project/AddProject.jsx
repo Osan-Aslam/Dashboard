@@ -4,6 +4,7 @@ import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import $, { event } from "jquery";
+import axios from 'axios';
 
 function AddProject() {
 
@@ -17,6 +18,9 @@ function AddProject() {
   const [text, setText] = useState("Type Here...");
   const divRef = useRef(null);
   const [fetchDivs, setFetchDivs] = useState(["Item 1", "Item 2"]);
+  const [projectUrl, setProjectUrl] = useState("");
+  const [projectName, setprojectName] = useState("");
+
 
   const fetchSitemap = async () => {
     if (!siteUrl.trim()) {
@@ -88,6 +92,36 @@ function AddProject() {
   const removeFetchDiv = (index) => {
     setUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if(!projectName || !projectUrl || !siteUrl || tags.length === 0) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("ProjectName", projectName);
+    formData.append("ProjectURL", projectUrl);
+    formData.append("SitemapURL", siteUrl);
+    formData.append("AnchorTags", tags.join(","));
+
+    try{
+      const response = await axios.post(`http://207.180.203.98:5030/api/projects`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Accept": "*/*"
+        }
+      });
+      console.log("Success:", response.data);
+      alert("Project added successfully!");
+    } catch(error) {
+      console.error("Error adding project:", error);
+      setError("Something went wrong while adding the project.");
+    }
+  }
+
   return (
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>
@@ -95,11 +129,11 @@ function AddProject() {
         <form className='w-100'>
           <div>
             <label for="formGroupExampleInput" className="form-label">Project Name</label>
-            <input type="text" className="form-control" id="formGroupExampleInput" placeholder="Enter project name" />
+            <input type="text" className="form-control" onChange={(e) => setprojectName(e.target.value)} id="formGroupExampleInput" placeholder="Enter project name" />
           </div>
           <div>
             <label for="formGroupExampleInput2" className="form-label">Project URL</label>
-            <input type="text" className="form-control" id="formGroupExampleInput2" placeholder="Enter project url" />
+            <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => setProjectUrl(e.target.value)} placeholder="Enter project url" />
           </div>
           <div>
             <label for="formGroupExampleInput2" className="form-label">Fetch Pages From Sitemap URL</label>
@@ -141,7 +175,7 @@ function AddProject() {
             </div>
           </div>
           <div className='text-center'>
-            <button className='btn dashboard-btn px-4 py-2'>Add Projects</button>
+            <button className='btn dashboard-btn px-4 py-2' onClick={handleSubmit}>Add Projects</button>
           </div>
         </form>
       </div>

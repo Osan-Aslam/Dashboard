@@ -21,7 +21,7 @@ function Project() {
     <div className='main-project'>
       <div className='d-flex justify-content-between p-3'>
         <h3>Our Projects</h3>
-        <Link className='btn dashboard-btn' to="/addProject"><FaPlus /> Add New Projects</Link>
+        <Link className='btn dashboard-btn' to="/project/addProject"><FaPlus /> Add New Projects</Link>
       </div>
       <div className='d-lg-flex justify-content-between p-3 align-items-center'>
         <p className='result'>Results: <span>108,877 sites</span></p>

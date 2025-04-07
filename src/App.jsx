@@ -18,6 +18,7 @@ import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
 import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
+import UpdateProject from "./pages/Dasboard/Project/UpdateProject";
 
 function ForceLowercaseRedirect() {
   const location = useLocation();
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
           {
             path: "team/viewMember/:id",
             element: <ViewMember />
+          },
+          {
+            path: "project/updateproject/:id",
+            element: <UpdateProject />
           }
         ],
       },

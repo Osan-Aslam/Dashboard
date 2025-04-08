@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { MdEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
@@ -6,26 +6,12 @@ import { FaPlus } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-import $, { error, event } from "jquery";
-import axios from 'axios';
+import $, { event } from "jquery";
 
 
 function Project() {
-  const [projects, setProjects] = useState([]);
-
-  useState(() => {
-    const response = axios.get(`http://207.180.203.98:5030/api/projects`, {
-      headers: {
-        'Accept': '*/*',
-      }
-    }).then(response => {
-      setProjects(response.data);
-    }).catch(error => {
-      console.error("Error fetching Projects:", error);
-    });
-  }, []);
-  $(document).ready(function () {
-    $(".dropdown-item").click(function () {
+  $(document).ready(function() {
+    $(".dropdown-item").click(function() {
       let value = $(this).text();
       $(this).closest(".dropdown").find(".dropdown-toggle").text(value);
     });
@@ -46,23 +32,23 @@ function Project() {
           </div>
           <div className='d-flex align-items-center viewTime'>
             <span>View By Duration:</span>
-            <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
-              <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">Last 7 days</li>
-                <li className="dropdown-item">Last 30 days</li>
-                <li className="dropdown-item">Last 3 month</li>
-                <li className="dropdown-item">Custom Duration</li>
-              </ul>
+              <div className="dropdown">
+                <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
+                <ul className="dropdown-menu dropdown-menu-dark">
+                  <li className="dropdown-item">Last 7 days</li>
+                  <li className="dropdown-item">Last 30 days</li>
+                  <li className="dropdown-item">Last 3 month</li>
+                  <li className="dropdown-item">Custom Duration</li>
+                </ul>
+              </div>
             </div>
-          </div>
         </div>
       </div>
       <div className="table-responsive px-3">
         <table className="table">
           <thead>
             <tr>
-              <th scope="col">Our Projects</th>
+                <th scope="col">Our Projects</th>
               <th scope="col">Total Backlinks</th>
               <th scope="col">Total Guest Posts</th>
               <th scope="col">Total Link Insertions</th>
@@ -74,30 +60,102 @@ function Project() {
             </tr>
           </thead>
           <tbody>
-            {
-              projects.length > 0 ? (
-                projects.map((project, index) => (
-                  <tr key={index}>
-                    <td className='d-flex flex-column'>{project.projectName}
-                      <a href="#">{project.projectURL}</a>
-                    </td>
-                    <td>34</td>
-                    <td>23</td>
-                    <td>11</td>
-                    <td>19</td>
-                    <td>15</td>
-                    <td>9</td>
-                    <td>$300</td>
-                    <td className='d-flex'>
-                      <button className='btn dashboard-btn'><FaEye /> View</button>
-                      <button className='btn dashboard-btn'><MdEdit /> Edit</button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <p>no Projects</p>
-              )
-            }
+            <tr>
+              <td className='d-flex flex-column'>Paragraph Generator
+                <a href="#">paragraph-generator.com</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='d-flex flex-column'>AI Detector
+                <a href="#">ai-detector.info</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='d-flex flex-column'>AI Poem Generator
+                <a href="#">aipoem-generator.com</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='d-flex flex-column'>Reword Generator
+                <a href="#">rewordgenerator.net</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='d-flex flex-column'>Rewording Tool
+                <a href="#">rewording-tool.com</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='d-flex flex-column'>Sentence Rewriter
+                <a href="#">sentencerewriter.net</a>
+              </td>
+              <td>34</td>
+              <td>23</td>
+              <td>11</td>
+              <td>19</td>
+              <td>15</td>
+              <td>9</td>
+              <td>$300</td>
+              <td className='d-flex'>
+                <button className='btn dashboard-btn'><FaEye /> View</button>
+                <button className='btn dashboard-btn'><MdEdit /> Edit</button>
+              </td>
+            </tr>
           </tbody>
         </table>
         <div className='d-flex align-items-center justify-content-between'>
@@ -115,9 +173,9 @@ function Project() {
             <div className="dropdown">
               <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
               <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">20 Per Page</li>
-                <li className="dropdown-item">30 Per Page</li>
-                <li className="dropdown-item">40 Per Page</li>
+                  <li className="dropdown-item">20 Per Page</li>
+                  <li className="dropdown-item">30 Per Page</li>
+                  <li className="dropdown-item">40 Per Page</li>
               </ul>
             </div>
           </div>

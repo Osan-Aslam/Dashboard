@@ -30,6 +30,10 @@ function Signup({FormHandle}) {
           "Content-Type": "application/json",
         },
       });
+      
+      if(response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+      };
 
       if(requestBody) {
         localStorage.setItem("username", requestBody.username);

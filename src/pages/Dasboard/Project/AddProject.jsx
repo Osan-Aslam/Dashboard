@@ -27,8 +27,11 @@ function AddProject() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!projectName || !projectUrl || !sitemapURL || anchorTags.length === 0) {
+    if (!projectName || !projectUrl || !sitemapURL || anchorTags.length === 0) {
       setError("Please fill in all required fields");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -40,7 +43,7 @@ function AddProject() {
 
     // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
-    try{
+    try {
       const response = await axios.post(`http://207.180.203.98:5030/api/projects`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -50,28 +53,37 @@ function AddProject() {
       // console.log("Success:", response.data);
       navigate("/project");
       alert("Project added successfully!");
-    } catch(error) {
+    } catch (error) {
       console.error("Error adding project:", error);
-      setError("Something went wrong while adding the project.");
+      const errorMsg = error?.response?.data?.message || error.message || "Something when wrong";
+      setError(errorMsg);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   }
   // fetch Sitemap URL 
 
   const fetchSitemapURL = async () => {
-    try{
+    try {
 
       const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${sitemapURL}`, {
-        headers : {
+        headers: {
           "Accept": "*/*",
         }
       });
       const locUrls = response.data.urls.map(item => item.loc);
       setUrls(locUrls);
-    } catch(error) {
+    } catch (error) {
       console.error("Error while fetching Sitemap", error);
+      const errorMsg = error?.response?.data?.message || error.message || "Something when wrong";
+      setError(errorMsg);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   }
-  
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && inputText.trim()) {
       e.preventDefault();
@@ -101,6 +113,11 @@ function AddProject() {
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>
       <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
+        {error && (
+          <div className='alert alert-danger p-2 col-5 mx-auto text-center'>
+            {error}
+          </div>
+        )}
         <form className='w-100' onSubmit={handleSubmit}>
           <div>
             <label htmlFor="formGroupExampleInput" className="form-label">Project Name</label>

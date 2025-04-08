@@ -8,11 +8,16 @@ import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import $, { error, event } from "jquery";
 import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 
 function Project() {
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [show, setShow] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+
 
 
   useState(() => {
@@ -41,6 +46,24 @@ function Project() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setSelectedProjectId(id);
+    setShow(true);
+  };
+  
+  const handleDeleteCancel = () => {
+    setShow(false);
+    setSelectedProjectId(null);
+  };
+  
+  const handleDeleteConfirm = async () => {
+    if (selectedProjectId) {
+      await DeletProject(selectedProjectId); // <- your actual delete method
+      setShow(false);                        // close modal
+      setSelectedProjectId(null);            // reset
+    }
+  };
+
   $(document).ready(function () {
     $(".dropdown-item").click(function () {
       let value = $(this).text();
@@ -49,28 +72,31 @@ function Project() {
   });
 
   return (
-    <div className='main-project'>
-      <div className='d-flex justify-content-between p-3'>
-        <h3>Our Projects</h3>
-        <Link className='btn dashboard-btn' to="/project/addProject"><FaPlus /> Add New Projects</Link>
-      </div>
-      <div className='d-lg-flex justify-content-between p-3 align-items-center'>
-        <p className='result'>Results: <span>{projects.length} sites</span></p>
-        <div className='d-lg-flex align-items-center'>
-          <div className='searchTag'>
-            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} name="" placeholder='Search Project' />
-            <CiSearch />
-          </div>
-          <div className='d-flex align-items-center viewTime'>
-            <span>View By Duration:</span>
-            <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
-              <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">Last 7 days</li>
-                <li className="dropdown-item">Last 30 days</li>
-                <li className="dropdown-item">Last 3 month</li>
-                <li className="dropdown-item">Custom Duration</li>
-              </ul>
+    <>
+
+      <div className='main-project'>
+        <div className='d-flex justify-content-between p-3'>
+          <h3>Our Projects</h3>
+          <Link className='btn dashboard-btn' to="/project/addProject"><FaPlus /> Add New Projects</Link>
+        </div>
+        <div className='d-lg-flex justify-content-between p-3 align-items-center'>
+          <p className='result'>Results: <span>{projects.length} sites</span></p>
+          <div className='d-lg-flex align-items-center'>
+            <div className='searchTag'>
+              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} name="" placeholder='Search Project' />
+              <CiSearch />
+            </div>
+            <div className='d-flex align-items-center viewTime'>
+              <span>View By Duration:</span>
+              <div className="dropdown">
+                <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
+                <ul className="dropdown-menu dropdown-menu-dark">
+                  <li className="dropdown-item">Last 7 days</li>
+                  <li className="dropdown-item">Last 30 days</li>
+                  <li className="dropdown-item">Last 3 month</li>
+                  <li className="dropdown-item">Custom Duration</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -146,7 +172,24 @@ function Project() {
           </div>
         </div>
       </div>
-    </div>
+      <Modal
+        show={show}
+        onHide={handleDeleteCancel}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You Want To Delete this Member?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleDeleteCancel}>Close</Button>
+          <Button variant="primary" onClick={handleDeleteConfirm}>Delete</Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   )
 }
 

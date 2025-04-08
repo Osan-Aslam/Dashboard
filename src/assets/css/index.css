@@ -326,9 +326,9 @@ form .signin-btn:hover {
   display: flex;
   align-items: center;
   margin: 0px 3px;
-  font-size: 10px;
-  border-radius: 4px;
-  padding: 3px 8px;
+  font-size: 9px;
+  border-radius: 3px;
+  padding: 4px;
 }
 
 .btn.dashboard-btn {

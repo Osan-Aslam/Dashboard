@@ -16,6 +16,7 @@ import ViewMember from "./pages/Dasboard/Team/ViewMember";
 import BacklinkFilter from "./pages/Dasboard/Backlinks/BacklinkFilter";
 import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
 import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
+import ViewProject from "./pages/Dasboard/Project/ViewProject";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
@@ -139,7 +140,16 @@ const router = createBrowserRouter([
           {
             path: "viewMember/:id",
             element: <ViewMember />
+          },
+          {
+            path: "project/updateproject/:id",
+            element: <UpdateProject />
+          },
+          {
+            path: "project/viewproject/:id",
+            element: <ViewProject />
           }
+
         ],
       },
     ],

@@ -323,10 +323,12 @@ form .signin-btn:hover {
 
 .table .btn,
 .table .btn {
+  border-radius: 3px;
   display: flex;
   align-items: center;
-  margin: 0px 3px;
-  font-size: 13px;
+  margin: 0px 2px;
+  font-size: 9px;
+  padding: 3px 6px;
 }
 
 .btn.dashboard-btn {
@@ -411,8 +413,8 @@ form .signin-btn:hover {
   cursor: pointer;
 }
 
-.card .icon.delete-icon{
-  background-color: #FF4A4A;
+.card .icon.delete-icon, .delete-project{
+  background-color: #FF4A4A !important;
 }
 
 .card {

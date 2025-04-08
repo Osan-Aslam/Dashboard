@@ -17,77 +17,84 @@ function AddProject() {
   const [text, setText] = useState("Type Here...");
   const divRef = useRef(null);
   const [fetchDivs, setFetchDivs] = useState(["Item 1", "Item 2"]);
+  const [projectUrl, setProjectUrl] = useState("");
+  const [projectName, setprojectName] = useState("");
+  const navigate = useNavigate();
 
-  const fetchSitemap = async () => {
-    if (!siteUrl.trim()) {
-      setError("Please enter a URL.");
+  // Sumbit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if(!projectName || !projectUrl || !sitemapURL || anchorTags.length === 0) {
+      setError("Please fill in all required fields");
       return;
     }
-    setError("");
-    setIsLoading(true);
-    let sitemapUrl = siteUrl.includes(".xml") ? siteUrl : siteUrl.endsWith("/") ? `${siteUrl}sitemap_index.xml` : `${siteUrl}/sitemap_index.xml`;
-    const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
 
-    try {
-      let response = await fetch(proxyUrl + sitemapUrl);
-      if (!response.ok) throw new Error("Sitemap not found or URL is incorrect.");
+    const formData = new FormData();
+    formData.append("ProjectName", projectName);
+    formData.append("ProjectURL", projectUrl);
+    formData.append("SitemapURL", sitemapURL);
+    formData.append("AnchorTags", JSON.stringify(anchorTags));
 
-      const text = await response.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, "application/xml");
+    // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
-      const sitemapElements = xml.querySelectorAll("sitemap > loc");
-      let allpageUrls = [];
-
-      if (sitemapElements.length > 0) {
-        const sitemapUrls = Array.from(sitemapElements).map(el => el.textContent);
-
-        for (let sitemap of sitemapUrls) {
-          let subResponse = await fetch(proxyUrl + sitemap);
-          if (!subResponse.ok) continue;
-
-          let subText = await subResponse.text();
-          let subXml = parser.parseFromString(subText, "application/xml");
-          let locElements = subXml.querySelectorAll("url > loc");
-          let pageUrls = Array.from(locElements).map(el => el.textContent);
-          allpageUrls = [...allpageUrls, ...pageUrls];
+    try{
+      const response = await axios.post(`http://207.180.203.98:5030/api/projects`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "accept": "*/*"
         }
-        setUrls(allpageUrls);
-      }
-      else {
-        const locElements = xml.querySelectorAll("url > loc");
-        const extractedUrls = Array.from(locElements).map((el) => el.textContent);
-        setUrls(extractedUrls);
-      }
-
-    } catch (error) {
-      setError(error.message);
-      setUrls([]);
-    } finally {
-      setIsLoading(false);
+      });
+      // console.log("Success:", response.data);
+      navigate("/project");
+      alert("Project added successfully!");
+    } catch(error) {
+      console.error("Error adding project:", error);
+      setError("Something went wrong while adding the project.");
     }
+  }
+  // fetch Sitemap URL 
 
-  };
+  const fetchSitemapURL = async () => {
+    try{
+
+      const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${sitemapURL}`, {
+        headers : {
+          "Accept": "*/*",
+        }
+      });
+      const locUrls = response.data.urls.map(item => item.loc);
+      setUrls(locUrls);
+    } catch(error) {
+      console.error("Error while fetching Sitemap", error);
+    }
+  }
+  
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && inputText.trim()) {
       e.preventDefault();
-      setTags([...tags, inputText.trim()]);
+      setanchorTags([...anchorTags, inputText.trim()]);
       setinputText("");
       inputRef.current.innerText = "";
     }
-    else if (e.key === "Backspace" && !inputText && tags.length) {
-      setTags(tags.slice(0, -1));
+    else if (e.key === "Backspace" && !inputText && anchorTags.length) {
+      setanchorTags(anchorTags.slice(0, -1));
     }
   };
+
   const removeTag = (index) => {
-    setTags(tags.filter((_, i) => i !== index));
+    setanchorTags(anchorTags.filter((_, i) => i !== index));
   };
+
   const handleInput = () => {
     setText(divRef.current.innerText);
   }
+
   const removeFetchDiv = (index) => {
     setUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }
+
+
   return (
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>
@@ -104,8 +111,8 @@ function AddProject() {
           <div>
             <label for="formGroupExampleInput2" className="form-label">Fetch Pages From Sitemap URL</label>
             <div className='d-flex fetch-page'>
-              <input type="text" className="form-control" value={siteUrl} onChange={(e) => setSiteUrl(e.target.value)} placeholder="Enter sitemap url" aria-label="Recipient's username" aria-describedby="button-addon2" />
-              <button className="btn fetch-btn" type="button" id="button-addon2" onClick={fetchSitemap}>Fetch Pages</button>
+              <input type="text" className="form-control" onChange={(e) => setsitemapURL(e.target.value)} placeholder="Enter sitemap url" aria-label="Recipient's username" aria-describedby="button-addon2" />
+              <button className="btn fetch-btn" type="button" onClick={fetchSitemapURL} id="button-addon2">Fetch Pages</button>
             </div>
           </div>
           <div className='fetchPages p-2 mt-3'>

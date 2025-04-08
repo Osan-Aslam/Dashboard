@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {BrowserRouter as Router, Routes, Route, useLocation, Outlet, createBrowserRouter, RouterProvider} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, useLocation, Outlet, createBrowserRouter, RouterProvider, useNavigate} from "react-router-dom";
 import SignIn from "./pages/signIn/SignIn";
 import Signup from "./pages/signUp/SignUp";
 import Dashboard from './pages/Dasboard/dashboard/Dashboard'
@@ -16,20 +16,33 @@ import ViewMember from "./pages/Dasboard/Team/ViewMember";
 import BacklinkFilter from "./pages/Dasboard/Backlinks/BacklinkFilter";
 import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
 import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
+import UpdateProject from "./pages/Dasboard/Project/UpdateProject";
 import ViewProject from "./pages/Dasboard/Project/ViewProject";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
+function ForceLowercaseRedirect() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const lowerPath = location.pathname.toLowerCase();
+    if (location.pathname !== lowerPath) {
+      navigate(lowerPath, { replace: true });
+    }
+  }, [location, navigate]);
+
+  return null;
+}
 
 function MainLayout({members}) {
   const location = useLocation();
   const hideNavbar = ["/signin", "/signup", "/"].includes(location.pathname);
-  const hideSidebar = ["/signin", "/signup", "/"].includes(location.pathname);
-  
-  
+  const hideSidebar = ["/signin", "/signup", "/"].includes(location.pathname);  
 
   return (
     <>
+      <ForceLowercaseRedirect/>
       {!hideNavbar && <Navbar/>}
       <div className="container-fluid">
         <div className="row">
@@ -106,7 +119,7 @@ const router = createBrowserRouter([
             element: <Backlink/>,
           },
           {
-            path: "addProject",
+            path: "project/addProject",
             element: <AddProject/>,
           },
           {
@@ -118,7 +131,7 @@ const router = createBrowserRouter([
             element: <Sidebar/>,
           },
           {
-            path: "addBacklink",
+            path: "backlink/addBacklink",
             element: <AddBacklink/>,
           },
           {
@@ -126,7 +139,7 @@ const router = createBrowserRouter([
             element: <Project/>,
           },
           {
-            path: "addMember",
+            path: "team/addMember",
             element: <AddMember/>,
           },
           {
@@ -134,11 +147,11 @@ const router = createBrowserRouter([
             element: <BacklinkFilter/>,
           },
           {
-            path: "updateMember/:id",
+            path: "team/updateMember/:id",
             element: <UpdateMember/>
           },
           {
-            path: "viewMember/:id",
+            path: "team/viewMember/:id",
             element: <ViewMember />
           },
           {

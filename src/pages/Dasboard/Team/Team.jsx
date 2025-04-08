@@ -37,16 +37,15 @@ const Team = () => {
 
       try {
         const deleteUrl = `http://207.180.203.98:5030/api/team-members/${memberToDelete.id}`;
-        console.log(deleteUrl);
+        // console.log(deleteUrl);
         const response = await axios.delete(deleteUrl, {
           "headers": {
             "accept": "*/*",
           }
         })
-        console.log("Delete Response: ", response);
+        // console.log("Delete Response: ", response);
         
         setMembers((prevMember) => prevMember.filter(member => member.id !== memberToDelete.id));
-        alert("Member Delete successfully");
       } catch (error) {
         console.error("Error deleting member:", error.response?.data || error.message);
         alert("Failed to delete member. Please try again.");
@@ -72,9 +71,9 @@ const Team = () => {
             return {...member, profilePictureUrl};
           })
         )
-        console.log("Fetched Member:", response.data);
+        // console.log("Fetched Member:", response.data);
         setMembers(memberWithImages);
-        console.log(members.profilePictureUrl);
+        // console.log(members.profilePictureUrl);
       } catch (error) {
         console.error("Error fetching team members:", error);
       }
@@ -111,7 +110,7 @@ const Team = () => {
     <div>
       <div className='d-flex justify-content-between p-3'>
         <h3>Team</h3>
-        <Link className='btn dashboard-btn' to="/addMember"><FaPlus /> Add New Team Member</Link>
+        <Link className='btn dashboard-btn' to="/team/addMember"><FaPlus /> Add New Team Member</Link>
       </div>
       <div className='d-lg-flex justify-content-between p-3 align-items-center'>
         <p className='result'>Total Team Members: <span>{filterMember.length}</span></p>
@@ -151,10 +150,10 @@ const Team = () => {
                       <h5 className="card-title mb-1">{member.memberName}</h5>
                       <p className="card-text mb-1">{member.designation}</p>
                       <div>
-                        <Link to={`/ViewMember/${member.id}`}>
+                        <Link to={`/team/viewMember/${member.id}`}>
                           <FaEye className='icon' />
                         </Link>
-                        <Link to={`/updatemember/${member.id}`}>
+                        <Link to={`/team/updateMember/${member.id}`}>
                           <HiPencil className='icon' />
                         </Link>
                         <FaRegEnvelope className='icon' />

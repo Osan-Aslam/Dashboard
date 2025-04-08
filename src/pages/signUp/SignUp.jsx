@@ -33,16 +33,16 @@ function Signup({FormHandle}) {
       
       if(response.data.token) {
         localStorage.setItem("authToken", response.data.token);
-        navigate("/dashboard");
       };
 
       if(requestBody) {
         localStorage.setItem("username", requestBody.username);
         localStorage.setItem("password", requestBody.password);
       };
-
+      
       setUser("");
       setPassword("");
+      navigate("/signin");
 
     } catch(err) {
       console.error("Signup error:", err);
@@ -71,7 +71,7 @@ return (
                 <label htmlFor="">Password</label>
                 <input className="form-control" type="password" placeholder="Enter New Password" onChange={(e) => setPassword(e.target.value)} value={password} />
             </div>
-            <button className="btn signin-btn" onClick={handelSignup}>Sign Up</button>
+            <button className="btn signin-btn" type="submit">Sign Up</button>
         </form>
         <p>Already have an account? <Link to="/signin">SignIn</Link></p>
     </div>

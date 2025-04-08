@@ -5,6 +5,7 @@ import $, { event } from "jquery";
 
 function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   function logoutuser () {
     localStorage.removeItem("username");
@@ -12,20 +13,16 @@ function Sidebar() {
     navigate("/");
   };
 
+  const isActive = (basePath) => location.pathname.startsWith(basePath) ? "nav-link active" : "nav-link";
 
-  $(document).ready(function() {
-    $(".nav-link").click(function() {
-      $(".nav-link").removeClass("active");
-      $(this).addClass("active");
-    });
-  });
   return (
     <>
       <div className="nav flex-column nav-pills pt-4">
-        <Link to="/dashboard" className={"nav-link active"}>Dashboard</Link>
-        <Link to="/backlink" className="nav-link">Backlinks</Link>
-        <Link to="/project" className="nav-link">Our Projects</Link>
-        <Link to="/team" className="nav-link">Team</Link>
+        <Link to="/dashboard" className={isActive("/dashboard")}>Dashboard</Link>
+        <Link to="/backlink" className={isActive("/backlink")}>Backlinks</Link>
+        <Link to="/project" className={isActive("/project")}>Our Projects</Link>
+        <Link to="/team" className={isActive("/team")}>Team</Link>
+        <Link to="/#" className={isActive("/setting")}>Setting</Link>
         <Link to="/" onClick={logoutuser} className="nav-link logout d-none d-lg-block"><IoIosLogOut /> Logout</Link>
       </div>
     </>

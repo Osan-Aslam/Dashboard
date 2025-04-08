@@ -4,14 +4,16 @@ import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import $, { event } from "jquery";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function AddProject() {
 
-  const [siteUrl, setSiteUrl] = useState("");
+  const [sitemapURL, setsitemapURL] = useState("");
   const [urls, setUrls] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [tags, setTags] = useState([]);
+  const [anchorTags, setanchorTags] = useState([]);
   const [inputText, setinputText] = useState("");
   const inputRef = useRef(null);
   const [text, setText] = useState("Type Here...");
@@ -99,17 +101,17 @@ function AddProject() {
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>
       <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
-        <form className='w-100'>
+        <form className='w-100' onSubmit={handleSubmit}>
           <div>
-            <label for="formGroupExampleInput" className="form-label">Project Name</label>
-            <input type="text" className="form-control" id="formGroupExampleInput" placeholder="Enter project name" />
+            <label htmlFor="formGroupExampleInput" className="form-label">Project Name</label>
+            <input type="text" className="form-control" onChange={(e) => setprojectName(e.target.value)} id="formGroupExampleInput" placeholder="Enter project name" />
           </div>
           <div>
-            <label for="formGroupExampleInput2" className="form-label">Project URL</label>
-            <input type="text" className="form-control" id="formGroupExampleInput2" placeholder="Enter project url" />
+            <label htmlFor="formGroupExampleInput2" className="form-label">Project URL</label>
+            <input type="text" className="form-control" id="formGroupExampleInput2" onChange={(e) => setProjectUrl(e.target.value)} placeholder="Enter project url" />
           </div>
           <div>
-            <label for="formGroupExampleInput2" className="form-label">Fetch Pages From Sitemap URL</label>
+            <label htmlFor="formGroupExampleInput2" className="form-label">Fetch Pages From Sitemap URL</label>
             <div className='d-flex fetch-page'>
               <input type="text" className="form-control" onChange={(e) => setsitemapURL(e.target.value)} placeholder="Enter sitemap url" aria-label="Recipient's username" aria-describedby="button-addon2" />
               <button className="btn fetch-btn" type="button" onClick={fetchSitemapURL} id="button-addon2">Fetch Pages</button>
@@ -137,9 +139,9 @@ function AddProject() {
             </div>
           </div>
           <div>
-            <label for="formGroupExampleInput2" className="form-label">Anchor Text</label>
+            <label htmlFor="formGroupExampleInput2" className="form-label">Anchor Text</label>
             <div className='border p-2 typeTag'>
-              {tags.map((tag, index) => (
+              {anchorTags.map((tag, index) => (
                 <span className='tagName' key={index} contentEditable={false} onClick={() => removeTag(index)}>{tag} <RxCross2 className='cross' /></span>
               ))}
               <div className='typeInput' ref={inputRef} contentEditable suppressContentEditableWarning onInput={(e) => setinputText(e.currentTarget.innerText)} onKeyDown={handleKeyDown}>
@@ -148,7 +150,7 @@ function AddProject() {
             </div>
           </div>
           <div className='text-center'>
-            <button className='btn dashboard-btn px-4 py-2'>Add Projects</button>
+            <button className='btn dashboard-btn px-4 py-2' type='submit'>Add Projects</button>
           </div>
         </form>
       </div>

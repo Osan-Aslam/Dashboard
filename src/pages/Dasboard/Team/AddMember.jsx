@@ -4,9 +4,11 @@ import { FaPlus } from "react-icons/fa6";
 import uploadImage from "../../../assets/image/uploadImage.png"
 import {useNavigate, useParams } from 'react-router-dom';
 
+
 const AddTeam = () => {
   const [image, setImage] = useState(uploadImage);
   const navigate = useNavigate();
+  const [error, setError] = useState();
   const [member, setMember] = useState({
     memberName: "",
     designation: "",
@@ -41,7 +43,6 @@ const AddTeam = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
-        console.log("Preview Image Set:", reader.result); 
       };
       reader.readAsDataURL(file);
     }
@@ -49,7 +50,7 @@ const AddTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setError("");
     const formData = new FormData();
     formData.append("memberName", member.memberName);
     formData.append("designation", member.designation);
@@ -57,7 +58,7 @@ const AddTeam = () => {
     formData.append("basicSalary", member.basicSalary);
     formData.append("profilePicture", member.profilePicture);
 
-    console.log("Sending data:", Object.fromEntries(formData.entries()));
+    // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
     try{
       const response = await axios.post("http://207.180.203.98:5030/api/team-members", formData, {
@@ -65,11 +66,16 @@ const AddTeam = () => {
       });
       
       if (response.data) {
-        console.log(response.data);
+        // console.log(response.data);
         navigate("/team");
       }
     } catch (error) {
       console.error("Error adding member", error.response?.data || error.message);
+      const errorMsg = error.response?.data?.message || "Something when wrong";
+      setError(errorMsg);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   };
 
@@ -94,6 +100,11 @@ const AddTeam = () => {
     <div>
       <h3 className='ms-2 mt-3'>Add New Team Member</h3>
         <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
+          {error && (
+            <div className='alert alert-danger p-2 col-5 mx-auto text-center'>
+              {error}
+            </div>
+          )}
           <form className='w-100' onSubmit={handleSubmit}>
             <div className='text-center uploadImage'>
               {<img src={image} alt="" className='rounded-full'/>}

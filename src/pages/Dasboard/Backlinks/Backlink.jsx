@@ -14,7 +14,7 @@ function Backlink() {
     <>
       <div className='d-flex align-items-center justify-content-between p-2'>
         <h3>Backlinks</h3>
-        <Link className='btn dashboard-btn' to="/addBacklink"><FaPlus /> Add Backlink</Link>
+        <Link className='btn dashboard-btn' to="/backlink/addBacklink"><FaPlus /> Add Backlink</Link>
       </div>
       <div className='px-2'>
           <BacklinkFilter/>

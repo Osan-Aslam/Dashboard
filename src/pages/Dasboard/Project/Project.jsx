@@ -58,9 +58,9 @@ function Project() {
   
   const handleDeleteConfirm = async () => {
     if (selectedProjectId) {
-      await DeletProject(selectedProjectId); // <- your actual delete method
-      setShow(false);                        // close modal
-      setSelectedProjectId(null);            // reset
+      await DeletProject(selectedProjectId);
+      setShow(false);                        
+      setSelectedProjectId(null);            
     }
   };
 

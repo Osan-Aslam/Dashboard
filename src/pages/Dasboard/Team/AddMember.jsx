@@ -112,6 +112,10 @@ const AddTeam = () => {
               <input type="file" name="" className='uploadFile' id="" onChange={handleFileChange}/>
             </div>
             <div className='row'>
+              <div className='col-lg-12'>
+                <label htmlFor="memberEmail" className="form-label">Member Email</label>
+                <input type="text" className="form-control" name='memberEmail' id="memberName" placeholder="Enter member Email" onChange={handleChange} required/>
+              </div>
               <div className='col-lg-6'>
                 <label htmlFor="memberName" className="form-label">Member Name</label>
                 <input type="text" className="form-control" name='memberName' id="memberName" placeholder="Enter member name" onChange={handleChange} required/>

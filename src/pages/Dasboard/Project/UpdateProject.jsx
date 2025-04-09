@@ -26,13 +26,21 @@ function UpdateMember() {
       }
     }).then(response => {
       const project = response.data;
-      
+
       setprojectName(project.projectName);
       setprojectURL(project.projectURL);
       setsitemapURL(project.sitemapURL || '');
       let parsedTags = [];
       try {
-        parsedTags = typeof project.anchorTags === "string" ? JSON.parse(project.anchorTags) : project.anchorTags;
+        if (typeof project.anchorTags === "string") {
+          if (project.anchorTags.startsWith("[")) {
+            parsedTags = JSON.parse(project.anchorTags); // Proper JSON string
+          } else {
+            parsedTags = project.anchorTags.split(','); // Comma-separated string
+          }
+        } else {
+          parsedTags = project.anchorTags;
+        }
       } catch (err) {
         console.error("Failed to parse anchorTags: ", err);
         parsedTags = [];

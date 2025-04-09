@@ -108,7 +108,6 @@ function AddProject() {
     setUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }
 
-
   return (
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>

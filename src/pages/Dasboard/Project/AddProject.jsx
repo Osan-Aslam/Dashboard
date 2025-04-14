@@ -39,7 +39,25 @@ function AddProject() {
     formData.append("ProjectName", projectName);
     formData.append("ProjectURL", projectUrl);
     formData.append("SitemapURL", sitemapURL);
-    formData.append("AnchorTags", JSON.stringify(anchorTags));
+    let parsedTags = [];
+      try {
+        if (typeof formData.anchorTags === "string") {
+          if (formData.anchorTags.startsWith("[")) {
+            parsedTags = JSON.parse(formData.anchorTags); // Proper JSON string
+          } else {
+            parsedTags = formData.anchorTags.split(','); // Comma-separated string
+          }
+        } else {
+          parsedTags = formData.anchorTags;
+        }
+      } catch (err) {
+        console.error("Failed to parse anchorTags: ", err);
+        parsedTags = [];
+      }
+      anchorTags.forEach(tag => {
+        formData.append("AnchorTags", tag);
+      })
+    console.log(anchorTags);
 
     // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
@@ -143,7 +161,7 @@ function AddProject() {
                   urls.map((url, index) => (
                     <div key={index} className='fetchDiv'>
                       <div className='col-5 d-flex justify-content-between align-items-start page-url'>
-                        <a href={url}>{url}</a>
+                        <a href={url} className='fetchUrls'>{url}</a>
                         <RxCross2 onClick={() => removeFetchDiv(index)} className='cross' />
                       </div>
                     </div>
@@ -161,7 +179,6 @@ function AddProject() {
                 <span className='tagName' key={index} contentEditable={false} onClick={() => removeTag(index)}>{tag} <RxCross2 className='cross' /></span>
               ))}
               <div className='typeInput' ref={inputRef} contentEditable suppressContentEditableWarning onInput={(e) => setinputText(e.currentTarget.innerText)} onKeyDown={handleKeyDown}>
-
               </div>
             </div>
           </div>

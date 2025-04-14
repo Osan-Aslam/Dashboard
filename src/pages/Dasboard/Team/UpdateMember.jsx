@@ -14,6 +14,7 @@ function UpdateMember() {
     designation: "",
     joiningDate: "",
     basicSalary: "",
+    email: "",
     profilePicture: null,
   });
   const [image, setImage] = useState(null);
@@ -27,6 +28,7 @@ function UpdateMember() {
           setMember({
             memberName: response.data.memberName || "",
             designation: response.data.designation || "",
+            email: response.data.email || "",
             joiningDate: response.data.joiningDate ? response.data.joiningDate.split("T")[0] : "", // Fix date format
             basicSalary: response.data.basicSalary || "",
             profilePicture: profilePath || uploadImage,
@@ -84,6 +86,7 @@ function UpdateMember() {
     // Append form data safely
     formData.append("MemberName", member.memberName || "");
     formData.append("Designation", member.designation || "");
+    formData.append("email", member.email || "");
     formData.append("JoiningDate", member.joiningDate ? `${member.joiningDate}T00:00:00.000Z` : "");
     formData.append("BasicSalary", Number(member.basicSalary) || 0);
     formData.append("profilePicture", image);
@@ -131,6 +134,10 @@ function UpdateMember() {
               <input type="file" name="profilePictureUrl" className='uploadFile' onChange={handleFileChange} id="" />
             </div>
             <div className='row'>
+              <div className='col-lg-12'>
+                <label htmlFor="email" className="form-label">Member Email</label>
+                <input type="email" className="form-control" name='email' value={member.email} onChange={handleChange} id="memberName" placeholder="Enter member Email" required/>
+              </div>
               <div className='col-lg-6'>
                 <label htmlFor="memberName" className="form-label">Member Name</label>
                 <input type="text" className="form-control" name='memberName' value={member.memberName} onChange={handleChange} id="memberName" placeholder="Enter member name" required/>

@@ -14,6 +14,7 @@ function ViewMember() {
     designation: "",
     joiningDate: "",
     basicSalary: "",
+    email: "",
     profilePicture: null,
   });
 
@@ -28,6 +29,7 @@ function ViewMember() {
           setMember({
             memberName: response.data.memberName || "N/A",
             designation: response.data.designation || "N/A",
+            email: response.data.email || "N/A",
             joiningDate: response.data.joiningDate
               ? new Date(response.data.joiningDate).toLocaleDateString()
               : "N/A",
@@ -53,6 +55,7 @@ function ViewMember() {
           <Card.Img variant="top" className='mt-3' src={member.profilePicture} />
           <Card.Body className='ps-4 d-flex'>
             <div>
+              <p>Email: <span>{member.email}</span></p>
               <p>Name: <span>{member.memberName}</span></p>
               <p>Joining Date: <span>{member.joiningDate}</span></p>
             </div>

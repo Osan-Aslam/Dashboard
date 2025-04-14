@@ -18,6 +18,8 @@ import ProtectRoute from "./pages/Routing/PrivateRoute/ProtectRoute";
 import PublicRoute from "./pages/Routing/PublicRoute/PublicRoute";
 import UpdateProject from "./pages/Dasboard/Project/UpdateProject";
 import ViewProject from "./pages/Dasboard/Project/ViewProject";
+import UpdateBacklink from "./pages/Dasboard/Backlinks/UpdateBacklink";
+import ViewBacklink from "./pages/Dasboard/Backlinks/ViewBacklink";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 
@@ -161,6 +163,14 @@ const router = createBrowserRouter([
           {
             path: "project/viewproject/:id",
             element: <ViewProject />
+          },
+          {
+            path: "backlink/updatebacklink/:id",
+            element: <UpdateBacklink />,
+          },
+          {
+            path: "backlink/viewbacklink/:id",
+            element: <ViewBacklink />
           }
         ],
       },

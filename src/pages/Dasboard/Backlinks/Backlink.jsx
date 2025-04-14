@@ -16,7 +16,7 @@ function Backlink() {
   useEffect(() => {
     const fetchBacklinks = async () => {
       try {
-        const response = await axios.get(`http://207.180.203.98:5030/api/Backlinks`, {
+        const response = await axios.get(`http://207.180.203.98:5059/api/Backlinks`, {
           headers: {
             "Accept": "text/plain"
           }

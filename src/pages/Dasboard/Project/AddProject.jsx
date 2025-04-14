@@ -62,7 +62,7 @@ function AddProject() {
     // console.log("Sending data:", Object.fromEntries(formData.entries()));
 
     try {
-      const response = await axios.post(`http://207.180.203.98:5030/api/projects`, formData, {
+      const response = await axios.post(`http://207.180.203.98:5059/api/projects`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "accept": "*/*"
@@ -85,7 +85,7 @@ function AddProject() {
   const fetchSitemapURL = async () => {
     try {
 
-      const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${sitemapURL}`, {
+      const response = await axios.get(`http://207.180.203.98:5059/api/projects/pages/${sitemapURL}`, {
         headers: {
           "Accept": "*/*",
         }

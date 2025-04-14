@@ -21,10 +21,10 @@ function ViewMember() {
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const response = await axios.get(`http://207.180.203.98:5030/api/team-members/${id}`);
+        const response = await axios.get(`http://207.180.203.98:5059/api/team-members/${id}`);
         // console.log("API Response", response.data);
         if (response.data) {
-          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : defaultImage;
+          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : defaultImage;
           // console.log("path:", profilePath);
           setMember({
             memberName: response.data.memberName || "N/A",

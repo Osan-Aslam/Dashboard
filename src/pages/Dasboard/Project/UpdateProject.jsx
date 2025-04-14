@@ -20,7 +20,7 @@ function UpdateMember() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://207.180.203.98:5030/api/projects/${id}`, {
+    const response = axios.get(`http://207.180.203.98:5059/api/projects/${id}`, {
       headers: {
         'Accept': '*/*',
       }
@@ -61,7 +61,7 @@ function UpdateMember() {
   const fetchSitemapPages = async (sitemapURL) => {
     try {
 
-      const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${sitemapURL}`, {
+      const response = await axios.get(`http://207.180.203.98:5059/api/projects/pages/${sitemapURL}`, {
         headers: {
           "Accept": "*/*",
         }
@@ -83,7 +83,7 @@ function UpdateMember() {
       formData.append("AnchorTags", tag);
     })
 
-    axios.patch(`http://207.180.203.98:5030/api/projects/${id}`, formData, {
+    axios.patch(`http://207.180.203.98:5059/api/projects/${id}`, formData, {
       headers: {
         "Accept": "*/*",
         "Content-Type": "multipart/form-data",

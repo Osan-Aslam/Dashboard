@@ -72,7 +72,7 @@ function AddBacklink() {
     console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
     try {
-      const response = await axios.post(`http://207.180.203.98:5030/api/Backlinks`, formData, {
+      const response = await axios.post(`http://207.180.203.98:5059/api/Backlinks`, formData, {
         headers: {
           "Accept": "text/plain",
           "Content-Type": "multipart/form-data"
@@ -92,7 +92,7 @@ function AddBacklink() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://207.180.203.98:5030/api/projects", {
+        const response = await axios.get("http://207.180.203.98:5059/api/projects", {
           headers: { "Accept": "*/*" },
         });
         const sitemapURL = response.data.map(project => project.sitemapURL)
@@ -131,7 +131,7 @@ function AddBacklink() {
   const fetchSitemapURL = async (project) => {
     try {
       // console.log(project.sitemapURL)
-      const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
+      const response = await axios.get(`http://207.180.203.98:5059/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
         headers: {
           "Accept": "*/*",
         }
@@ -151,7 +151,7 @@ function AddBacklink() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get("http://207.180.203.98:5030/api/team-members");
+        const response = await axios.get("http://207.180.203.98:5059/api/team-members");
         setTeamMembers(response.data);
         // console.log(response.data);
       } catch (error) {

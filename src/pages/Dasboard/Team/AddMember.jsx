@@ -63,7 +63,7 @@ const AddTeam = () => {
     console.log("Sending data:", Object.fromEntries(formData.entries()));
 
     try{
-      const response = await axios.post("http://207.180.203.98:5030/api/team-members", formData, {
+      const response = await axios.post("http://207.180.203.98:5059/api/team-members", formData, {
         headers: {"Content-Type": "multipart/form-data", "accept": "*/*"},
       });
       
@@ -83,7 +83,7 @@ const AddTeam = () => {
 
   const fetchProfilePicture = async (profilePictureUrl) => {
     try {
-      const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
+      const response = await axios.get(`http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
         headers: {
           'Accept': '*/*'
         },

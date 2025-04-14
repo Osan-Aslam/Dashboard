@@ -25,7 +25,7 @@ function Signup({FormHandle}) {
     };
 
     try{
-      const response = await axios.post("http://207.180.203.98:5030/api/signup", requestBody, {
+      const response = await axios.post("http://207.180.203.98:5059/api/signup", requestBody, {
         headers: {
           "Content-Type": "application/json",
         },

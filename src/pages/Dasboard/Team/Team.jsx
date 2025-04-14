@@ -36,7 +36,7 @@ const Team = () => {
     if(memberToDelete) {
 
       try {
-        const deleteUrl = `http://207.180.203.98:5030/api/team-members/${memberToDelete.id}`;
+        const deleteUrl = `http://207.180.203.98:5059/api/team-members/${memberToDelete.id}`;
         // console.log(deleteUrl);
         const response = await axios.delete(deleteUrl, {
           "headers": {
@@ -62,7 +62,7 @@ const Team = () => {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get("http://207.180.203.98:5030/api/team-members");
+        const response = await axios.get("http://207.180.203.98:5059/api/team-members");
         const fetchMembers = response.data;
 
         const memberWithImages = await Promise.all(
@@ -85,7 +85,7 @@ const Team = () => {
     if(!profilePath) return TeamImage;
     try {
       const response = await axios.get(
-        `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePath}`,
+        `http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${profilePath}`,
         {
           headers: { 'Accept': '*/*' },
           responseType: 'blob',

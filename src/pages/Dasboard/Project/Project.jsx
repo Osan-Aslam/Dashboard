@@ -20,7 +20,7 @@ function Project() {
 
 
   useState(() => {
-    const response = axios.get(`http://207.180.203.98:5030/api/projects`, {
+    const response = axios.get(`http://207.180.203.98:5059/api/projects`, {
       headers: {
         'Accept': '*/*',
       }
@@ -33,7 +33,7 @@ function Project() {
 
   const DeletProject = async (id) => {
     try {
-      const response = await axios.delete(`http://207.180.203.98:5030/api/projects/${id}`, {
+      const response = await axios.delete(`http://207.180.203.98:5059/api/projects/${id}`, {
         headers: {
           "Accept": "*/*",
         }

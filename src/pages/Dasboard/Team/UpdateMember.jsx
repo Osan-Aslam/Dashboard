@@ -22,9 +22,9 @@ function UpdateMember() {
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const response = await axios.get(`http://207.180.203.98:5030/api/team-members/${id}`);
+        const response = await axios.get(`http://207.180.203.98:5059/api/team-members/${id}`);
         if (response.data) {
-          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : null;
+          const profilePath = response.data.profilePictureUrl ? `http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${response.data.profilePictureUrl}` : null;
           setMember({
             memberName: response.data.memberName || "",
             designation: response.data.designation || "",
@@ -52,7 +52,7 @@ function UpdateMember() {
 
   // const fetchProfilePicture = async (profilePictureUrl) => {
   //   try {
-  //     const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
+  //     const response = await axios.get(`http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
   //       headers: {
   //         'Accept': '*/*'
   //       },
@@ -95,7 +95,7 @@ function UpdateMember() {
 
     try {
       const response = await axios.patch(
-        `http://207.180.203.98:5030/api/team-members/${id}`,
+        `http://207.180.203.98:5059/api/team-members/${id}`,
         formData,
         {
           headers: {

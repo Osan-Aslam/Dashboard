@@ -42,7 +42,7 @@ function UpdateBacklink() {
 	useEffect(() => {
 		const fetchBacklink = async () => {
 			try {
-				const response = await axios.get(`http://207.180.203.98:5030/api/Backlinks/${id}`, {
+				const response = await axios.get(`http://207.180.203.98:5059/api/Backlinks/${id}`, {
 					headers: {
 						"Accept": "text/plain",
 					}
@@ -109,7 +109,7 @@ function UpdateBacklink() {
 		console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
 		try {
-			const response = await axios.patch(`http://207.180.203.98:5030/api/Backlinks/${id}`, formData, {
+			const response = await axios.patch(`http://207.180.203.98:5059/api/Backlinks/${id}`, formData, {
 				headers: {
 					"Accept": "*/*",
 					"Content-Type": "multipart/form-data"
@@ -129,7 +129,7 @@ function UpdateBacklink() {
 	useEffect(() => {
 		const fetchProjects = async () => {
 			try {
-				const response = await axios.get("http://207.180.203.98:5030/api/projects", {
+				const response = await axios.get("http://207.180.203.98:5059/api/projects", {
 					headers: { "Accept": "*/*" },
 				});
 				const sitemapURL = response.data.map(project => project.sitemapURL)
@@ -167,7 +167,7 @@ function UpdateBacklink() {
 	const fetchSitemapURL = async (project) => {
 		try {
 			// console.log(project.sitemapURL)
-			const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
+			const response = await axios.get(`http://207.180.203.98:5059/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
 				headers: {
 					"Accept": "*/*",
 				}
@@ -187,7 +187,7 @@ function UpdateBacklink() {
 	useEffect(() => {
 		const fetchMembers = async () => {
 			try {
-				const response = await axios.get("http://207.180.203.98:5030/api/team-members");
+				const response = await axios.get("http://207.180.203.98:5059/api/team-members");
 				setTeamMembers(response.data);
 				// console.log(response.data);
 			} catch (error) {

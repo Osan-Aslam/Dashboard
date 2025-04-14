@@ -14,6 +14,7 @@ const AddTeam = () => {
     designation: "",
     joiningDate: "",
     basicSalary: "",
+    email: "",
     profilePicture: null,
   });
 
@@ -57,8 +58,9 @@ const AddTeam = () => {
     formData.append("joiningDate", member.joiningDate);
     formData.append("basicSalary", member.basicSalary);
     formData.append("profilePicture", member.profilePicture);
+    formData.append("email", member.email);
 
-    // console.log("Sending data:", Object.fromEntries(formData.entries()));
+    console.log("Sending data:", Object.fromEntries(formData.entries()));
 
     try{
       const response = await axios.post("http://207.180.203.98:5030/api/team-members", formData, {
@@ -113,8 +115,8 @@ const AddTeam = () => {
             </div>
             <div className='row'>
               <div className='col-lg-12'>
-                <label htmlFor="memberEmail" className="form-label">Member Email</label>
-                <input type="text" className="form-control" name='memberEmail' id="memberName" placeholder="Enter member Email" onChange={handleChange} required/>
+                <label htmlFor="email" className="form-label">Member Email</label>
+                <input type="email" className="form-control" name='email' id="memberName" placeholder="Enter member Email" onChange={handleChange} required/>
               </div>
               <div className='col-lg-6'>
                 <label htmlFor="memberName" className="form-label">Member Name</label>

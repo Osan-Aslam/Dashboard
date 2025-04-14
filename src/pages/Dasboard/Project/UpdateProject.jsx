@@ -34,9 +34,9 @@ function UpdateMember() {
       try {
         if (typeof project.anchorTags === "string") {
           if (project.anchorTags.startsWith("[")) {
-            parsedTags = JSON.parse(project.anchorTags); // Proper JSON string
+            parsedTags = JSON.parse(project.anchorTags);
           } else {
-            parsedTags = project.anchorTags.split(','); // Comma-separated string
+            parsedTags = project.anchorTags.split(',');
           }
         } else {
           parsedTags = project.anchorTags;

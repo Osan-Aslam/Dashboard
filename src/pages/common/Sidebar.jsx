@@ -1,21 +1,30 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { IoIosLogOut } from "react-icons/io";
 import $, { event } from "jquery";
 
 function Sidebar() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const [active, setActive] = useState(location.pathname);
-  
+
+  function logoutuser () {
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+    navigate("/");
+  };
+
+  const isActive = (basePath) => location.pathname.startsWith(basePath) ? "nav-link active" : "nav-link";
+
   return (
     <>
-    <div class="nav flex-column nav-pills pt-4">
-      <Link to="/dashboard" className={`nav-link ${active === "/dashboard" ? "active" : ""}`} onClick={() => setActive("/dashboard")}>Dashboard</Link>
-      <Link to="/backlink" className={`nav-link ${active === "/backlink" ? "active" : ""}`} onClick={() => setActive("/backlink")}>Backlinks</Link>
-      <Link to="/project" className={`nav-link ${active === "/project" ? "active" : ""}`} onClick={() => setActive("/project")}>Our Projects</Link>
-      <Link to="/team" className={`nav-link ${active === "/team" ? "active" : ""}`} onClick={() => setActive("/team")}>Team</Link>
-      <Link to="/" className="nav-link logout d-none d-lg-block"><IoIosLogOut /> Logout</Link>
-    </div>
+      <div className="nav flex-column nav-pills pt-4">
+        <Link to="/dashboard" className={isActive("/dashboard")}>Dashboard</Link>
+        <Link to="/backlink" className={isActive("/backlink")}>Backlinks</Link>
+        <Link to="/project" className={isActive("/project")}>Our Projects</Link>
+        <Link to="/team" className={isActive("/team")}>Team</Link>
+        <Link to="/#" className={isActive("/setting")}>Setting</Link>
+        <Link to="/" onClick={logoutuser} className="nav-link logout d-none d-lg-block"><IoIosLogOut /> Logout</Link>
+      </div>
     </>
   )
 }

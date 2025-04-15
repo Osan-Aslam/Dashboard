@@ -62,7 +62,7 @@ function SignIn() {
           <form onSubmit={handleLogin}>
               <div>
                   <label htmlFor="UserName">User Name</label>
-                  <input className="form-control" id="text" type="text" placeholder="Enter username" onChange={(e) => setUser(e.target.value)} value={User} />
+                  <input className="form-control" id="text" type="text" placeholder="Enter usernameasdasdasdasdas" onChange={(e) => setUser(e.target.value)} value={User} />
               </div>
               <div className="mt-3">
                   <label htmlFor="UserName">Password</label>

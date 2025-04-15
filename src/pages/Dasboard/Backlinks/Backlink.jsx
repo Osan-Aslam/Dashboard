@@ -106,7 +106,7 @@ function Backlink() {
                       </div>
                     </td>
                     <td>
-                      <a className='livelink breaklink' href="#">{backlink.liveLink}</a>
+                      <a className='livelink breaklink link-container' href="#">{backlink.liveLink}</a>
                       <div className='mt-1'>
                         <span><Badge>{`Page Traffic: ${formatNumber(backlink.pageTraffic)}`}</Badge></span>
                         <span><Badge>{`First Seen: ${backlink.firstSeen}` || ""}</Badge></span>
@@ -119,7 +119,7 @@ function Backlink() {
                     </td>
                     <td>
                       <p>{backlink.outReacher.memberName}</p>
-                      <a className='breaklink' href="#">{backlink.outReacher.email} <MdOutlineContentCopy /></a>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy /></span>
                     </td>
                     <td>
                       <span>{backlink.approver.memberName}</span>
@@ -139,7 +139,9 @@ function Backlink() {
                   </tr>
                 ))
               ) : (
-                <p>p</p>
+                <div className='text-center pt-2'>
+                  <h2>No Backlinks Found</h2>
+                </div>
               )}
           </tbody>
         </table>

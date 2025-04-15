@@ -22,8 +22,8 @@ function UpdateBacklink() {
 	const [OutReacherTeamId, setOutReacherTeamId] = useState("");
 	const [ContentLink, setContentLink] = useState("");
 	const [DealType, setDealType] = useState("");
-	const [backLinkType, setBackLinkType] = useState("");
-	const [Price, setPrice] = useState("0");
+	const [backLinkType, setBackLinkType] = useState("Paid");
+	const [Price, setPrice] = useState("");
 	const [projects, setProjects] = useState([]);
 	const [selectedProject, setSelectedProject] = useState("Select Project");
 	const [error, setError] = useState("");
@@ -146,15 +146,12 @@ function UpdateBacklink() {
 
 	const handleSelect = (project) => {
 		if (project) {
-			// console.log("Selected Project:", project)
 			setProjectId(project.id);
 			setSelectedProject(project.projectName);
 			setProjectName(project.projectName);
 			setSitemapURL(project.sitemapURL);
 			setprojectURL(project.projectURL);
 			setAnchorTags(project.anchorTags)
-			// console.log(project.anchorTags);
-			// console.log("Selected sitemap URL:", project.sitemapURL);
 			if (project.sitemapURL) {
 				fetchSitemapURL(project);
 			} else {
@@ -166,7 +163,6 @@ function UpdateBacklink() {
 	// fetch Sitemap URL 
 	const fetchSitemapURL = async (project) => {
 		try {
-			// console.log(project.sitemapURL)
 			const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
 				headers: {
 					"Accept": "*/*",
@@ -189,7 +185,6 @@ function UpdateBacklink() {
 			try {
 				const response = await axios.get("http://207.180.203.98:5030/api/team-members");
 				setTeamMembers(response.data);
-				// console.log(response.data);
 			} catch (error) {
 				console.error("Error fetching team members:", error);
 			}
@@ -218,12 +213,14 @@ function UpdateBacklink() {
 		$('.js-example-basic-single').select2();
 	});
 
-	const handleBackLinkTypeChange = (type) => {
-    setBackLinkType(type);
-    if (type === "Free") {
-      setPrice("0");
-    }
-  };
+	useEffect(() => {
+		if (Price > 0) {
+			setBackLinkType("Paid");
+		} 
+		else if (Price <= 0) {
+			setBackLinkType("Free");
+		}
+	}, [Price]);
 
 	return (
 		<div>
@@ -374,10 +371,10 @@ function UpdateBacklink() {
 							</div>
 							<div className="dropdown d-flex flex-column col-6 mt-2">
 								<label htmlFor="">Backlink Cost</label>
-								<a className="btn dropdown-toggle" value={backLinkType} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{backLinkType}</a>
+								<button className="btn dropdown-toggle" value={backLinkType} href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{backLinkType}</button>
 								<ul className="dropdown-menu">
-									<li className="dropdown-item" onClick={() => handleBackLinkTypeChange("Free")}>Free</li>
-									<li className="dropdown-item" onClick={() => handleBackLinkTypeChange("Paid")}>Paid</li>
+									<li className="dropdown-item" onClick={() => setBackLinkType("Free")}>Free</li>
+									<li className="dropdown-item" onClick={() => setBackLinkType("Paid")}>Paid</li>
 								</ul>
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-2">

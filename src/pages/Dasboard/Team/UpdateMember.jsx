@@ -50,21 +50,6 @@ function UpdateMember() {
     fetchMember();
   }, [id]);
 
-  // const fetchProfilePicture = async (profilePictureUrl) => {
-  //   try {
-  //     const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
-  //       headers: {
-  //         'Accept': '*/*'
-  //       },
-  //       responseType: 'blob',
-  //     });
-  //     return URL.createObjectURL(response.data);
-  //   } catch(error) {
-  //     console.error("Error fetching profile:" ,error);
-  //     return null;
-  //   }
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMember((prev) => ({ ...prev, [name]: value }));

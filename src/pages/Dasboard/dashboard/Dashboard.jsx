@@ -11,7 +11,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchBacklinks = async () => {
       try {
-        const response = await axios.get('http://207.180.203.98:5030/api/Backlinks', {
+        const response = await axios.get('http://207.180.203.98:5059/api/Backlinks', {
           headers: {
             'Accept': 'text/plain',
           },
@@ -29,7 +29,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`http://207.180.203.98:5030/api/projects`, {
+        const response = await axios.get(`http://207.180.203.98:5059/api/projects`, {
           headers: {
             'Accept': '*/*',
           }
@@ -47,7 +47,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get("http://207.180.203.98:5030/api/team-members");        
+        const response = await axios.get("http://207.180.203.98:5059/api/team-members");        
         setTeamMembers(response.data);
       } catch (error) {
         console.error("Error fetching team members:", error);

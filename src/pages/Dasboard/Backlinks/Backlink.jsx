@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import BacklinkFilter from './BacklinkFilter'
 import { FaPlus } from 'react-icons/fa6'
@@ -9,9 +9,12 @@ import Badge from 'react-bootstrap/Badge';
 import { MdOutlineContentCopy } from "react-icons/md";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import axios from 'axios'
+import { Dropdown } from 'react-bootstrap';
+import $, { event } from "jquery";
 
 function Backlink() {
   const [backlinks, setBacklinks] = useState([]);
+  const [selectedSort, setSelectedSort] = useState('Low to high price');
 
   useEffect(() => {
     const fetchBacklinks = async () => {
@@ -37,6 +40,41 @@ function Backlink() {
     return num;
   };
 
+  const sortedBacklinks = useMemo(() => {
+    let sorted = [...backlinks];
+    switch (selectedSort) {
+      case 'Low to high price':
+        return sorted.sort((a, b) => a.price - b.price);
+      case 'High to low price':
+        return sorted.sort((a, b) => b.price - a.price);
+      case 'Deal traffic Low to High':
+        return sorted.sort((a, b) => a.domainTraffic - b.domainTraffic);
+      case 'Deal traffic High to Low':
+        return sorted.sort((a, b) => b.domainTraffic - a.domainTraffic);
+      case 'Deal US traffic Low to High':
+        return sorted.sort((a, b) => a.usTraffic - b.usTraffic);
+      case 'Live link traffic High to Low':
+        return sorted.sort((a, b) => b.pageTraffic - a.pageTraffic);
+      case 'Live link traffic Low to High':
+        return sorted.sort((a, b) => a.pageTraffic - b.pageTraffic);
+      default:
+        return sorted;
+    }
+  }, [selectedSort, backlinks]);
+
+  const copyToClipboard = (email) => {
+    navigator.clipboard.writeText(email)
+      .then(() => {
+        $(".email-copied").removeClass("d-none");
+        $(".email-copied").text(`Copied: ${email}`);
+        setTimeout(() => {
+          $(".email-copied").addClass("d-none");
+        }, 3000);
+      })
+      .catch(error => {
+        console.error(`Could not copy emial: `, error);
+      });
+  };
 
   return (
     <>
@@ -47,23 +85,24 @@ function Backlink() {
       <div className='px-2'>
         <BacklinkFilter />
       </div>
+      <div className='alert alert-danger p-2 col-3 mx-auto text-center email-copied d-none'>Email Copied</div>
       <div className='d-lg-flex justify-content-between p-3 align-items-center'>
         <p className='result'>Results: <span>{`${backlinks.length} sites`}</span></p>
         <div className='d-lg-flex align-items-center'>
           <div className='d-flex align-items-center viewTime'>
             <span>Sort by:</span>
-            <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Low to high price</button>
-              <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">Low to high price</li>
-                <li className="dropdown-item">High to low price</li>
-                <li className="dropdown-item">Deal traffic Low to High</li>
-                <li className="dropdown-item">Deal traffic High to Low</li>
-                <li className="dropdown-item">Deal US traffic Low to High</li>
-                <li className="dropdown-item">Live link traffic High to Low</li>
-                <li className="dropdown-item">Live link traffic Low to High</li>
-              </ul>
-            </div>
+            <Dropdown>
+              <Dropdown.Toggle variant="transparent" id="dropdown-basic">
+                {selectedSort}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {['Low to high price', 'High to low price', 'Deal traffic Low to High', 'Deal traffic High to Low', 'Deal US traffic Low to High', 'Live link traffic High to Low', 'Live link traffic Low to High'].map((label, i) => (
+                  <Dropdown.Item key={i} onClick={() => setSelectedSort(label)}>
+                    {label}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </div>
       </div>
@@ -85,11 +124,11 @@ function Backlink() {
           </thead>
           <tbody className='backlinks'>
             {
-              backlinks.length > 0 ? (
-                backlinks.map((backlink, index) => (
+              sortedBacklinks.length > 0 ? (
+                sortedBacklinks.map((backlink, index) => (
                   <tr key={index}>
                     <td className='d-flex flex-column'>
-                      <a className='projectlink' href="#">{backlink.project.projectURL}</a>
+                      <a className='projectlink' target='_blank' href={backlink.project.projectURL}>{backlink.project.projectURL}</a>
                       <a className='sublink' href="#">{backlink.project.projectName}</a>
                       <div className='mt-1'>
                         <span><Badge>{backlink.anchorTags}</Badge></span>
@@ -109,9 +148,9 @@ function Backlink() {
                       <a className='livelink breaklink link-container' href="#">{backlink.liveLink}</a>
                       <div className='mt-1'>
                         <span><Badge>{`Page Traffic: ${formatNumber(backlink.pageTraffic)}`}</Badge></span>
-                        <span><Badge>{`First Seen: ${backlink.firstSeen}` || ""}</Badge></span>
-                        <span><Badge>{`Last Seen: ${backlink.lastSeen}` || ""}</Badge></span>
-                        <span><Badge className='lostdate'>{`Lost Date: ${backlink.lostDate}` || ""}</Badge></span>
+                        <span><Badge>{`First Seen: ${backlink.firstSeen}`}</Badge></span>
+                        <span><Badge>{`Last Seen: ${backlink.lastSeen}`}</Badge></span>
+                        <span><Badge className='lostdate'>{`Lost Date: ${backlink.lostDate}`}</Badge></span>
                       </div>
                     </td>
                     <td>
@@ -119,14 +158,14 @@ function Backlink() {
                     </td>
                     <td>
                       <p>{backlink.outReacher.memberName}</p>
-                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy /></span>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)}/></span>
                     </td>
                     <td>
                       <span>{backlink.approver.memberName}</span>
                     </td>
                     <td>
                       <p>{backlink.contentWriter.memberName}</p>
-                      <a href={backlink.contentLink}>Article Link <FaExternalLinkAlt /></a>
+                      <a target='_blank' href={backlink.contentLink}>Article Link <FaExternalLinkAlt /></a>
                     </td>
                     <td>
                       <p>{backlink.dealType}</p>

@@ -21,7 +21,6 @@ import ViewProject from "./pages/Dasboard/Project/ViewProject";
 import UpdateBacklink from "./pages/Dasboard/Backlinks/UpdateBacklink";
 import ViewBacklink from "./pages/Dasboard/Backlinks/ViewBacklink";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from "axios";
 
 function ForceLowercaseRedirect() {
   const location = useLocation();
@@ -63,30 +62,11 @@ function MainLayout({members}) {
 }
 
 function App() {
-  const [members, setMember] = useState([]);
-
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try{
-        const response = await axios.get("http://207.180.203.98:5030/api/team-members");
-        setMember(response.data);
-      } catch(error) {
-        console.error("Error fetching members", error);
-      }
-    };
-    fetchMembers();
-  }, []);
-
-  const handleMemberAdded = (newMember) => {
-    setMember([...members, newMember]);
-  };
-
-  
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout members={members}/>,
+    element: <MainLayout/>,
     children: [
       {
         element: <PublicRoute />,
@@ -126,7 +106,7 @@ const router = createBrowserRouter([
           },
           {
             path: "team",
-            element: <Team members={members} onMemberAdded={handleMemberAdded}/>,
+            element: <Team />,
           },
           {
             path: "sidebar",

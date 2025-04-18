@@ -701,6 +701,11 @@ form .signin-btn:hover {
   word-break: break-word;
 }
 
+.alert.email-copied{
+  position: fixed;
+  right: 20px;
+  top: 50px;
+}
 @media screen and (max-width: 992px) {
   .tab-pane .dashboard {
     display: grid;

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsFilterLeft } from "react-icons/bs";
 import $, { event } from "jquery";
 import axios from 'axios';
+import 'select2';
 
 function BacklinkFilter() {
   const [selectedProject, setSelectedProject] = useState("All");
@@ -13,7 +14,7 @@ function BacklinkFilter() {
   const [projects, setProjects] = useState([]);
   const [urls, setUrls] = useState([]);
   const [error, setError] = useState("");
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedTag, setSelectedTag] = useState("Select Anchor Text");
   const [selectedUrl, setSelectedUrl] = useState("Select Sub Page");
   const [OutReacherTeamId, setOutReacherTeamId] = useState("");
   const [OutReacherName, setOutReacherName] = useState("");
@@ -21,6 +22,11 @@ function BacklinkFilter() {
   const [DealType, setDealType] = useState("");
   const [LinkType, setLinkType] = useState("");
   const [backLinkType, setBackLinkType] = useState("Free");
+  const [tlds, setTlds] = useState([]);
+  const [selectedTld, setSelectedTld] = useState('TLD');
+  const [languages, setLanguages] = useState([]);
+  const [selectedLang, setSelectedLang] = useState('Select Language');
+  const outReacherRef = useRef();
 
   const handleSelect = (project) => {
     if (project) {
@@ -98,9 +104,82 @@ function BacklinkFilter() {
     member.designation === "Manager"
   );
 
-  $(document).ready(function () {
+  useEffect(() => {
+    // Initialize select2
     $('.js-example-basic-single').select2();
-  });
+
+    // Bind the change event
+    $('.js-example-basic-single').on('change', function () {
+      const selectedProjectId = $(this).val();
+      const selectedProject = projects.find(
+        (p) => p.id.toString() === selectedProjectId
+      );
+      handleSelect(selectedProject);
+    });
+
+    // Cleanup
+    return () => {
+      $('.js-example-basic-single').each(function () {
+        const $el = $(this);
+        if ($el.data('select2')) {
+          $el.off('change').select2('destroy');
+        }
+      });
+    };
+  }, [projects, handleSelect]);
+
+  useEffect(() => {
+    const $outReacher = $(outReacherRef.current);
+
+    // Initialize Select2
+    $outReacher.select2();
+
+    // Change event
+    $outReacher.on('change', function () {
+      const id = $(this).val();
+      const member = outReachers.find((m) => m.id.toString() === id);
+      if (member) {
+        setOutReacherTeamId(member.id);
+        setOutReacherName(member.memberName);
+      }
+    });
+
+    // Cleanup
+    return () => {
+      if ($outReacher.data('select2')) {
+        $outReacher.off('change').select2('destroy');
+      }
+    };
+  }, [outReachers, setOutReacherTeamId, setOutReacherName]);
+
+  useEffect(() => {
+    fetch('/tlds.txt')
+      .then((res) => res.text())
+      .then((text) => {
+        const list = text
+          .split(',')
+          .map(item => item.trim())
+          .filter(Boolean);
+        setTlds(list);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch('/languages.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setLanguages(data);
+        if (data.length > 0) {
+          setSelectedLang(data.code);
+        }
+      })
+      .catch((err) => console.error("Error fetching languages:", err));
+  }, []);
+
+  const handleChange = (e) => {
+    setSelectedLang(e.target.value);
+  };
+
 
   return (
     <div className='filters p-2'>
@@ -136,13 +215,14 @@ function BacklinkFilter() {
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2">
                   <label htmlFor="">Select By project</label>
-                  <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{selectedProject}</a>
-                  <ul className="dropdown-menu">
-                    <li className="dropdown-item">All</li>
+                  <select className="form-select js-example-basic-single">
+                    <option value="">{selectedProject}</option>
                     {projects.map((project, index) => (
-                      <li className="dropdown-item" key={index} onClick={() => { handleSelect(project); fetchSitemapURL(project); }}>{project.projectName}</li>
+                      <option key={index} value={project.id}>
+                        {project.projectName}
+                      </option>
                     ))}
-                  </ul>
+                  </select>
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2">
                   <label htmlFor="">Select Sub Page</label>
@@ -161,27 +241,29 @@ function BacklinkFilter() {
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2">
                   <label htmlFor="">Select By Anchor</label>
-                  <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{selectedTag ? selectedTag : "Select Anchor Text"}</a>
-                  <ul className="dropdown-menu">
+                  <select className="form-select js-example-basic-single" value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)}>
+                    <option value="">Select Anchor Text</option>
                     {anchorTags.length > 0 ? (
                       anchorTags.map((tag, index) => (
-                        <li className="dropdown-item" key={index} onClick={() => setSelectedTag(tag)}>{tag}</li>
+                        <option className="dropdown-item" key={index} value={tag}>
+                          {tag}
+                        </option>
                       ))
                     ) : (
-                      <li className="dropdown-item">No Tags Found</li>
+                      <option className="dropdown-item" disabled> No Tags Found</option>
                     )}
-                  </ul>
+                  </select>
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2">
                   <label htmlFor="">Select Out Reacher</label>
-                  <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{OutReacherName || "Select out reacher"}</a>
-                  <ul className="dropdown-menu">
-                    {
-                      outReachers.map((member, index) => (
-                        <li className="dropdown-item" key={index} onClick={() => { setOutReacherTeamId(member.id); setOutReacherName(member.memberName) }}>{member.memberName}</li>
-                      ))
-                    }
-                  </ul>
+                  <select id="out-reacher" className="form-select js-example-basic-single" value={OutReacherName} onChange={(e) => setOutReacherName(e.target.value)}>
+                    <option value="">Select Out Reacher</option>
+                    {outReachers.map((member, index) => (
+                      <option key={index} value={member.id}>
+                        {member.memberName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                   <label htmlFor="">Link Type</label>
@@ -205,7 +287,7 @@ function BacklinkFilter() {
                   <div className='d-flex align-items-center'>
                     <input className='form-control' placeholder='Min' type="number" name="" id="" disabled={backLinkType === "Free"} />
                     <span className='me-1 mb-2'>-</span>
-                    <input className='form-control' placeholder='Max' type="number" name="" id="" disabled={backLinkType === "Free"}/>
+                    <input className='form-control' placeholder='Max' type="number" name="" id="" disabled={backLinkType === "Free"} />
                   </div>
                 </div>
                 <div className='col-lg-2 priceRange'>
@@ -242,21 +324,25 @@ function BacklinkFilter() {
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                   <label htmlFor="">Language</label>
-                  <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">English</a>
-                  <ul className="dropdown-menu">
-                    <li className="dropdown-item">English</li>
-                    <li className="dropdown-item">Spanish</li>
-                    <li className="dropdown-item">Chinese</li>
-                  </ul>
+                  <select id="languageSelect" className="form-select js-example-basic-single" value={selectedLang} onChange={handleChange}>
+                    <option value="SelectLanguage">Select Language</option>
+                    {languages.map((lang, idx) => (
+                      <option key={idx} value={lang.code}>
+                        {lang.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                   <label htmlFor="">TLD</label>
-                  <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">.com</a>
-                  <ul className="dropdown-menu">
-                    <li className="dropdown-item">.com</li>
-                    <li className="dropdown-item">.edu</li>
-                    <li className="dropdown-item">.net</li>
-                  </ul>
+                  <select className="js-example-basic-single form-select" value={selectedTld} onChange={(e) => setSelectedTld(e.target.value)}>
+                    <option value="TLD">TLD</option>
+                    {tlds.map((tld, index) => (
+                      <option key={index} value={tld}>
+                        {tld}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <button className='btn dashboard-btn py-2 px-3'>Apply Filters</button>

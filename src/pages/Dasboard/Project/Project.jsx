@@ -148,7 +148,6 @@ function Project() {
                 projects.filter(project => project.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((project, index) => {
                     const projectBacklinks = backlinks.filter(b => b.project?.id === project.id);
-
                     const totalBacklinks = projectBacklinks.length;
                     const guestPosts = projectBacklinks.filter(b => b.dealType === "Guest Post").length;
                     const linkInsertions = projectBacklinks.filter(b => b.dealType === "Link Insertion").length;

@@ -301,7 +301,7 @@ function UpdateBacklink() {
 								<a className="btn dropdown-toggle" href="#" value={LinkType} role="button" data-bs-toggle="dropdown" aria-expanded="false">{LinkType || "Link Type"}</a>
 								<ul className="dropdown-menu">
 									<li className="dropdown-item" onClick={() => setLinkType("Follow")}>Follow</li>
-									<li className="dropdown-item" onClick={() => setLinkType("Nofollow")}>Nofollow</li>
+									<li className="dropdown-item" onClick={() => setLinkType("NoFollow")}>NoFollow</li>
 								</ul>
 							</div>
 							<div className="inputs d-flex flex-column col-12 mt-2">

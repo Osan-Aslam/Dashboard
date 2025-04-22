@@ -10,10 +10,12 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import axios from 'axios'
 import { Dropdown } from 'react-bootstrap';
-import $, { event } from "jquery";
+import $ from "jquery";
 
 function Backlink() {
   const [backlinks, setBacklinks] = useState([]);
+  const [filteredBacklinks, setFilteredBacklinks] = useState([]);
+  const [filters, setFilters] = useState({});
   const [selectedSort, setSelectedSort] = useState('Low to high price');
 
   useEffect(() => {
@@ -26,6 +28,7 @@ function Backlink() {
         });
         console.log("Fetched backlinks:", response.data);
         setBacklinks(response.data);
+        setFilteredBacklinks(response.data)
       } catch (error) {
         console.log("Error fetching backlinks:", error);
       }
@@ -40,8 +43,9 @@ function Backlink() {
     return num;
   };
 
+  // Sort the filtered backlinks after applying filters
   const sortedBacklinks = useMemo(() => {
-    let sorted = [...backlinks];
+    let sorted = [...filteredBacklinks];
     switch (selectedSort) {
       case 'Low to high price':
         return sorted.sort((a, b) => a.price - b.price);
@@ -60,7 +64,7 @@ function Backlink() {
       default:
         return sorted;
     }
-  }, [selectedSort, backlinks]);
+  }, [selectedSort, filteredBacklinks]);
 
   const copyToClipboard = (email) => {
     navigator.clipboard.writeText(email)
@@ -76,6 +80,100 @@ function Backlink() {
       });
   };
 
+  const applyFilters = (filterValues) => {
+    setFilters(filterValues);
+
+    let filtered = [...backlinks];
+
+    if (filterValues.dealType) {
+      filtered = filtered.filter(b => b.dealType?.toLowerCase() === filterValues.dealType.toLowerCase());
+    }
+
+    if (filterValues.linkType) {
+      filtered = filtered.filter(b => b.linkType === filterValues.linkType);
+    }
+
+    if (filterValues.projectName) {
+      filtered = filtered.filter(b => b.project?.projectName?.toLowerCase() === filterValues.projectName.toLowerCase());
+    }
+
+    if (filterValues.selectedUrl) {
+      filtered = filtered.filter(b => b.pageUrl === filterValues.selectedUrl);
+    }
+
+    if (filterValues.selectedTag) {
+      filtered = filtered.filter(b => (b.anchorTags || "").split(',').map(t => t.trim()).includes(filterValues.selectedTag));
+    }
+
+    if (filterValues.OutReacherName) {
+      filtered = filtered.filter((link) => link.outReacher?.id === filterValues.OutReacherName
+      );
+    }
+
+    if (filterValues.selectedLang && filterValues.selectedLang !== "SelectLanguage") {
+      filtered = filtered.filter(b => b.language === filterValues.selectedLang);
+    }
+
+    if (filterValues.selectedTld && filterValues.selectedTld !== "TLD") {
+      filtered = filtered.filter(b => {
+        try {
+          const url = new URL(b.dealLink);
+          const hostnameParts = url.hostname.split('.');
+          const tld = hostnameParts[hostnameParts.length - 1];
+          return tld === filterValues.selectedTld.toLowerCase();
+        } catch (e) {
+          return false;
+        }
+      });
+    }
+
+    if (filterValues.backlinkType === "Free") {
+      filtered = filtered.filter(b => parseFloat(b.price || 0) === 0);
+    } else {
+      if (filterValues.minPrice || filterValues.maxPrice) {
+        filtered = filtered.filter(b => {
+          const price = parseFloat(b.price || 0);
+          return (!filterValues.minPrice || price >= parseFloat(filterValues.minPrice)) &&
+            (!filterValues.maxPrice || price <= parseFloat(filterValues.maxPrice));
+        });
+      }
+    }
+
+    if (filterValues.domainTrafficMin || filterValues.domainTrafficMax) {
+      filtered = filtered.filter(b => {
+        const traffic = parseFloat(b.domainTraffic || 0);
+        return (!filterValues.domainTrafficMin || traffic >= parseFloat(filterValues.domainTrafficMin)) &&
+          (!filterValues.domainTrafficMax || traffic <= parseFloat(filterValues.domainTrafficMax));
+      });
+    }
+
+    if (filterValues.usTrafficMin || filterValues.usTrafficMax) {
+      filtered = filtered.filter(b => {
+        const traffic = parseFloat(b.usTraffic || 0);
+        return (!filterValues.usTrafficMin || traffic >= parseFloat(filterValues.usTrafficMin)) &&
+          (!filterValues.usTrafficMax || traffic <= parseFloat(filterValues.usTrafficMax));
+      });
+    }
+
+    if (filterValues.mozDaMin || filterValues.mozDaMax) {
+      filtered = filtered.filter(b => {
+        const da = parseFloat(b.domainAuthority || 0); // Updated here
+        return (!filterValues.mozDaMin || da >= parseFloat(filterValues.mozDaMin)) &&
+          (!filterValues.mozDaMax || da <= parseFloat(filterValues.mozDaMax));
+      });
+    }
+
+    if (filterValues.mozDrMin || filterValues.mozDrMax) {
+      filtered = filtered.filter(b => {
+        const dr = parseFloat(b.domainRating || 0); // Adjust based on actual API field name
+        return (!filterValues.mozDrMin || dr >= parseFloat(filterValues.mozDrMin)) &&
+          (!filterValues.mozDrMax || dr <= parseFloat(filterValues.mozDrMax));
+      });
+    }
+    console.log("Filtered Results:", filtered);
+    setFilteredBacklinks(filtered);
+  };
+
   return (
     <>
       <div className='d-flex align-items-center justify-content-between p-2'>
@@ -83,11 +181,11 @@ function Backlink() {
         <Link className='btn dashboard-btn' to="/backlink/addBacklink"><FaPlus /> Add Backlink</Link>
       </div>
       <div className='px-2'>
-        <BacklinkFilter />
+        <BacklinkFilter onApplyFilters={applyFilters} />
       </div>
       <div className='alert alert-danger p-2 col-3 mx-auto text-center email-copied d-none'>Email Copied</div>
       <div className='d-lg-flex justify-content-between p-3 align-items-center'>
-        <p className='result'>Results: <span>{`${backlinks.length} sites`}</span></p>
+        <p className='result'>Results: <span>{`${sortedBacklinks.length} sites`}</span></p>
         <div className='d-lg-flex align-items-center'>
           <div className='d-flex align-items-center viewTime'>
             <span>Sort by:</span>
@@ -158,7 +256,7 @@ function Backlink() {
                     </td>
                     <td>
                       <p>{backlink.outReacher.memberName}</p>
-                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)}/></span>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
                     </td>
                     <td>
                       <span>{backlink.approver.memberName}</span>
@@ -178,9 +276,11 @@ function Backlink() {
                   </tr>
                 ))
               ) : (
-                <div className='text-center pt-2'>
-                  <h2>No Backlinks Found</h2>
-                </div>
+                <tr>
+                  <td colSpan="10" className='text-center'>
+                    <h5>No Backlinks Found</h5>
+                  </td>
+                </tr>
               )}
           </tbody>
         </table>

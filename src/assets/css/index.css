@@ -323,6 +323,7 @@ form .signin-btn:hover {
 
 .table .btn,
 .table .btn {
+  border-radius: 3px;
   display: flex;
   align-items: center;
   margin: 0px 3px;

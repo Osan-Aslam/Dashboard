@@ -1,0 +1,27 @@
+name: Deployment - Prod
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Deploy Application to Server
+      run: |
+        sshpass -p "NGs39o8R3u0w3c1axuq2RdG" ssh -o StrictHostKeyChecking=no root@207.180.203.98 << 'EOF'
+        screen -S react_app_prod -X quit || echo "No existing screen session to kill."
+        cd /root/prod/Dashboard || git clone https://Ehtisham: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@github.com/Osan-Aslam/Dashboard.git /root/prod/Dashboard
+        cd Dashboard
+        git stash
+        git pull origin main
+        npm install
+        screen -dmS react_app_prod npm start
+        echo 'React app started in detached screen session.'
+        EOF

@@ -68,6 +68,9 @@ function AddBacklink() {
     formData.append("ContentLink", ContentLink);
     formData.append("DealType", DealType);
     formData.append("Price", Price);
+    formData.append("AnchorTag", selectedTag);
+    formData.append("SubPage", selectedUrl);
+    console.log("submitted" + selectedUrl);
 
     console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
@@ -110,7 +113,7 @@ function AddBacklink() {
   const handleSelect = (project) => {
     if (project) {
       console.log("Selected Project:", project)
-      setSelectedUrl("");
+      // setSelectedUrl("");
       setProjectId(project.id);
       setSelectedProject(project.projectName);
       setProjectName(project.projectName);
@@ -298,18 +301,26 @@ function AddBacklink() {
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <label htmlFor="">Select Sub Page</label>
-                <select className="form-select js-example-basic-single" id="subPageSelect" onChange={(e) => setSelectedUrl(e.target.value)}>
-                  <option value="">Select Sub Page</option>
+                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {selectedUrl ? selectedUrl : "Select Sub Page"}
+                </a>
+                <ul className="dropdown-menu">
                   {urls.length > 0 ? (
                     urls.map((url, index) => (
-                      <option key={index} value={url}>
+                      <li 
+                        className="dropdown-item" 
+                        key={index} 
+                        onClick={() => {
+                          setSelectedUrl(url);
+                        }}
+                      >
                         {url}
-                      </option>
+                      </li>
                     ))
                   ) : (
-                    <option disabled>No Pages found</option>
+                    <li className="dropdown-item">No Pages Found</li>
                   )}
-                </select>
+                </ul>
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <div className='d-flex justify-content-between'>

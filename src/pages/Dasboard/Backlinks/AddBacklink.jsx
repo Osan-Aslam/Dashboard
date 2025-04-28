@@ -165,15 +165,18 @@ function AddBacklink() {
     };
     fetchMembers();
   }, []);
-  const contentWriters = teamMembers.filter(member =>
-    member.designation === "Content Writer"
-  );
-  const outReachers = teamMembers.filter(member =>
-    member.designation === "Out Reacher"
-  );
-  const ApproverName = teamMembers.filter(member =>
-    member.designation === "Manager"
-  );
+  const contentWriters = teamMembers;
+  const outReachers = teamMembers;
+  const ApproverName = teamMembers;
+  // const contentWriters = teamMembers.filter(member =>
+  //   member.designation === "Content Writer"
+  // );
+  // const outReachers = teamMembers.filter(member =>
+  //   member.designation === "Out Reacher"
+  // );
+  // const ApproverName = teamMembers.filter(member =>
+  //   member.designation === "Manager"
+  // );
 
   const [rows, setRows] = useState([{ id: 1 }]);
   const addRow = () => {

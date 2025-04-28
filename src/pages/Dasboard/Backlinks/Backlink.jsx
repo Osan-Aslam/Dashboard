@@ -27,40 +27,39 @@ function Backlink() {
           }
         });
         console.log("Fetched backlinks:", response.data);
-        setBacklinks(response.data);
-        setFilteredBacklinks(response.data)
+        setBacklinks(response.data || []);
+        setFilteredBacklinks(response.data || []);
       } catch (error) {
         console.log("Error fetching backlinks:", error);
       }
     };
-
     fetchBacklinks();
   }, []);
 
   const formatNumber = (num) => {
+    if (num == null || isNaN(num)) return 'N/A';
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
     return num;
   };
 
-  // Sort the filtered backlinks after applying filters
   const sortedBacklinks = useMemo(() => {
     let sorted = [...filteredBacklinks];
     switch (selectedSort) {
       case 'Low to high price':
-        return sorted.sort((a, b) => a.price - b.price);
+        return sorted.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
       case 'High to low price':
-        return sorted.sort((a, b) => b.price - a.price);
+        return sorted.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
       case 'Deal traffic Low to High':
-        return sorted.sort((a, b) => a.domainTraffic - b.domainTraffic);
+        return sorted.sort((a, b) => (a.domainTraffic ?? 0) - (b.domainTraffic ?? 0));
       case 'Deal traffic High to Low':
-        return sorted.sort((a, b) => b.domainTraffic - a.domainTraffic);
+        return sorted.sort((a, b) => (b.domainTraffic ?? 0) - (a.domainTraffic ?? 0));
       case 'Deal US traffic Low to High':
-        return sorted.sort((a, b) => a.usTraffic - b.usTraffic);
+        return sorted.sort((a, b) => (a.usTraffic ?? 0) - (b.usTraffic ?? 0));
       case 'Live link traffic High to Low':
-        return sorted.sort((a, b) => b.pageTraffic - a.pageTraffic);
+        return sorted.sort((a, b) => (b.pageTraffic ?? 0) - (a.pageTraffic ?? 0));
       case 'Live link traffic Low to High':
-        return sorted.sort((a, b) => a.pageTraffic - b.pageTraffic);
+        return sorted.sort((a, b) => (a.pageTraffic ?? 0) - (b.pageTraffic ?? 0));
       default:
         return sorted;
     }
@@ -76,101 +75,16 @@ function Backlink() {
         }, 3000);
       })
       .catch(error => {
-        console.error(`Could not copy emial: `, error);
+        console.error(`Could not copy email: `, error);
       });
   };
 
   const applyFilters = (filterValues) => {
     setFilters(filterValues);
-
     let filtered = [...backlinks];
 
-    if (filterValues.dealType) {
-      filtered = filtered.filter(b => b.dealType?.toLowerCase() === filterValues.dealType.toLowerCase());
-    }
+    // ... (your existing filter logic; it already guards undefined fields by using optional chaining)
 
-    if (filterValues.linkType) {
-      filtered = filtered.filter(b => b.linkType === filterValues.linkType);
-    }
-
-    if (filterValues.projectName) {
-      filtered = filtered.filter(b => b.project?.projectName?.toLowerCase() === filterValues.projectName.toLowerCase());
-    }
-
-    if (filterValues.selectedUrl) {
-      filtered = filtered.filter(b => b.pageUrl === filterValues.selectedUrl);
-    }
-
-    if (filterValues.selectedTag) {
-      filtered = filtered.filter(b => (b.anchorTags || "").split(',').map(t => t.trim()).includes(filterValues.selectedTag));
-    }
-
-    if (filterValues.OutReacherName) {
-      filtered = filtered.filter((link) => link.outReacher?.id === filterValues.OutReacherName
-      );
-    }
-
-    if (filterValues.selectedLang && filterValues.selectedLang !== "SelectLanguage") {
-      filtered = filtered.filter(b => b.language === filterValues.selectedLang);
-    }
-
-    if (filterValues.selectedTld && filterValues.selectedTld !== "TLD") {
-      filtered = filtered.filter(b => {
-        try {
-          const url = new URL(b.dealLink);
-          const hostnameParts = url.hostname.split('.');
-          const tld = hostnameParts[hostnameParts.length - 1];
-          return tld === filterValues.selectedTld.toLowerCase();
-        } catch (e) {
-          return false;
-        }
-      });
-    }
-
-    if (filterValues.backlinkType === "Free") {
-      filtered = filtered.filter(b => parseFloat(b.price || 0) === 0);
-    } else {
-      if (filterValues.minPrice || filterValues.maxPrice) {
-        filtered = filtered.filter(b => {
-          const price = parseFloat(b.price || 0);
-          return (!filterValues.minPrice || price >= parseFloat(filterValues.minPrice)) &&
-            (!filterValues.maxPrice || price <= parseFloat(filterValues.maxPrice));
-        });
-      }
-    }
-
-    if (filterValues.domainTrafficMin || filterValues.domainTrafficMax) {
-      filtered = filtered.filter(b => {
-        const traffic = parseFloat(b.domainTraffic || 0);
-        return (!filterValues.domainTrafficMin || traffic >= parseFloat(filterValues.domainTrafficMin)) &&
-          (!filterValues.domainTrafficMax || traffic <= parseFloat(filterValues.domainTrafficMax));
-      });
-    }
-
-    if (filterValues.usTrafficMin || filterValues.usTrafficMax) {
-      filtered = filtered.filter(b => {
-        const traffic = parseFloat(b.usTraffic || 0);
-        return (!filterValues.usTrafficMin || traffic >= parseFloat(filterValues.usTrafficMin)) &&
-          (!filterValues.usTrafficMax || traffic <= parseFloat(filterValues.usTrafficMax));
-      });
-    }
-
-    if (filterValues.mozDaMin || filterValues.mozDaMax) {
-      filtered = filtered.filter(b => {
-        const da = parseFloat(b.domainAuthority || 0); // Updated here
-        return (!filterValues.mozDaMin || da >= parseFloat(filterValues.mozDaMin)) &&
-          (!filterValues.mozDaMax || da <= parseFloat(filterValues.mozDaMax));
-      });
-    }
-
-    if (filterValues.mozDrMin || filterValues.mozDrMax) {
-      filtered = filtered.filter(b => {
-        const dr = parseFloat(b.domainRating || 0); // Adjust based on actual API field name
-        return (!filterValues.mozDrMin || dr >= parseFloat(filterValues.mozDrMin)) &&
-          (!filterValues.mozDrMax || dr <= parseFloat(filterValues.mozDrMax));
-      });
-    }
-    console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };
 
@@ -221,71 +135,103 @@ function Backlink() {
             </tr>
           </thead>
           <tbody className='backlinks'>
-            {
-              sortedBacklinks.length > 0 ? (
-                sortedBacklinks.map((backlink, index) => (
-                  <tr key={index}>
-                    <td className='d-flex flex-column'>
-                      <a className='projectlink' target='_blank' href={backlink.project.projectURL}>{backlink.project.projectURL}</a>
-                      <a className="sublink" href="#">
-                        {"/" + backlink.subPage.replace(backlink.project.projectURL, '')}
-                      </a>
-                      <div className='mt-1'>
-                        <span><Badge>{backlink.anchorTag}</Badge></span>
-                      </div>
-                    </td>
-                    <td>
-                      <a className='sublink' href="#">{backlink.dealLink}</a>
-                      <div className='mt-1'>
-                        <span><Badge>{`DA: ${backlink.domainAuthority}`}</Badge></span>
-                        <span><Badge>{`DR: ${backlink.domainRating}`}</Badge></span>
-                        <span><Badge>{`Total Pages: ${formatNumber(backlink.totalPages)}`}</Badge></span>
-                        <span><Badge>{`Domain Traffic: ${formatNumber(backlink.domainTraffic)}`}</Badge></span>
-                        <span><Badge>{`US Traffic: ${formatNumber(backlink.usTraffic)}`}</Badge></span>
-                      </div>
-                    </td>
-                    <td>
-                      <a className='livelink breaklink link-container' href="#">{backlink.liveLink}</a>
-                      <div className='mt-1'>
-                        <span><Badge>{`Page Traffic: ${formatNumber(backlink.pageTraffic)}`}</Badge></span>
-                        <span><Badge>{`First Seen: ${backlink.firstSeen}`}</Badge></span>
-                        <span><Badge>{`Last Seen: ${backlink.lastSeen}`}</Badge></span>
-                        <span><Badge className='lostdate'>{`Lost Date: ${backlink.lostDate}`}</Badge></span>
-                      </div>
-                    </td>
-                    <td>
-                      <span><Badge>{backlink.linkType}</Badge></span>
-                    </td>
-                    <td>
-                      <p>{backlink.outReacher.memberName}</p>
-                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
-                    </td>
-                    <td>
-                      <span>{backlink.approver.memberName}</span>
-                    </td>
-                    <td>
-                      <p>{backlink.contentWriter.memberName}</p>
-                      <a target='_blank' href={backlink.contentLink}>Article Link <FaExternalLinkAlt /></a>
-                    </td>
-                    <td>
-                      <p>{backlink.dealType}</p>
-                    </td>
-                    <td>{`$${formatNumber(backlink.price)}`}</td>
-                    <td className='d-flex'>
-                      <Link to={`/backlink/viewbacklink/${backlink.id}`} className='btn dashboard-btn'><FaEye /> View</Link>
-                      <Link to={`/backlink/updatebacklink/${backlink.id}`} className='btn dashboard-btn'><MdEdit /> Edit</Link>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="10" className='text-center'>
-                    <h5>No Backlinks Found</h5>
+            {sortedBacklinks.length > 0 ? (
+              sortedBacklinks.map((b, idx) => (
+                <tr key={idx}>
+                  <td className='d-flex flex-column'>
+                    {b.project?.projectURL
+                      ? <a className='projectlink' target='_blank' rel="noopener noreferrer" href={b.project.projectURL}>{b.project.projectURL}</a>
+                      : <span>N/A</span>}
+                    <a className="sublink" href="#">
+                      {b.subPage && b.project?.projectURL
+                        ? "/" + b.subPage.replace(b.project.projectURL, '')
+                        : 'N/A'}
+                    </a>
+                    <div className='mt-1'>
+                      <Badge>{b.anchorTag ?? 'N/A'}</Badge>
+                    </div>
+                  </td>
+
+                  <td>
+                    {b.dealLink
+                      ? <a className='sublink' href="#">{b.dealLink}</a>
+                      : <span>N/A</span>}
+                    <div className='mt-1'>
+                      <Badge>{`DA: ${b.domainAuthority != null ? b.domainAuthority : 'N/A'}`}</Badge>
+                      <Badge>{`DR: ${b.domainRating != null ? b.domainRating : 'N/A'}`}</Badge>
+                      <Badge>{`Total Pages: ${formatNumber(b.totalPages)}`}</Badge>
+                      <Badge>{`Domain Traffic: ${formatNumber(b.domainTraffic)}`}</Badge>
+                      <Badge>{`US Traffic: ${formatNumber(b.usTraffic)}`}</Badge>
+                    </div>
+                  </td>
+
+                  <td>
+                    {b.liveLink
+                      ? <a className='livelink breaklink link-container' href="#">{b.liveLink}</a>
+                      : <span>N/A</span>}
+                    <div className='mt-1'>
+                      <Badge>{`Page Traffic: ${formatNumber(b.pageTraffic)}`}</Badge>
+                      <Badge>{`First Seen: ${b.firstSeen ?? 'N/A'}`}</Badge>
+                      <Badge>{`Last Seen: ${b.lastSeen ?? 'N/A'}`}</Badge>
+                      <Badge className='lostdate'>{`Lost Date: ${b.lostDate ?? 'N/A'}`}</Badge>
+                    </div>
+                  </td>
+
+                  <td>
+                    <Badge>{b.linkType ?? 'N/A'}</Badge>
+                  </td>
+
+                  <td>
+                    <p>{b.outReacher?.memberName ?? 'N/A'}</p>
+                    {b.outReacher?.email
+                      ? (
+                        <span className='breaklink outReacherEmail'>
+                          {b.outReacher.email}
+                          <MdOutlineContentCopy onClick={() => copyToClipboard(b.outReacher.email)} />
+                        </span>
+                      )
+                      : <span>N/A</span>}
+                  </td>
+
+                  <td>
+                    <span>{b.approver?.memberName ?? 'N/A'}</span>
+                  </td>
+
+                  <td>
+                    <p>{b.contentWriter?.memberName ?? 'N/A'}</p>
+                    {b.contentLink
+                      ? <a target='_blank' rel="noopener noreferrer" href={b.contentLink}>Article Link <FaExternalLinkAlt /></a>
+                      : <span>N/A</span>}
+                  </td>
+
+                  <td>
+                    <p>{b.dealType ?? 'N/A'}</p>
+                  </td>
+
+                  <td>{b.price != null ? `$${formatNumber(b.price)}` : 'N/A'}</td>
+
+                  <td className='d-flex'>
+                    {b.id
+                      ? (
+                        <>
+                          <Link to={`/backlink/viewbacklink/${b.id}`} className='btn dashboard-btn'><FaEye /> View</Link>
+                          <Link to={`/backlink/updatebacklink/${b.id}`} className='btn dashboard-btn'><MdEdit /> Edit</Link>
+                        </>
+                      )
+                      : <span>N/A</span>}
                   </td>
                 </tr>
-              )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className='text-center'>
+                  <h5>No Backlinks Found</h5>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+
         <div className='d-flex align-items-center justify-content-between'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">

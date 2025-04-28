@@ -48,7 +48,7 @@ function AddBacklink() {
       setTimeout(() => setError(""), 3000);
       return;
     }
-    
+
     const url = new URL(LiveLink);
     const dealLink = `${url.protocol}//${url.hostname}/`;
 
@@ -68,6 +68,9 @@ function AddBacklink() {
     formData.append("ContentLink", ContentLink);
     formData.append("DealType", DealType);
     formData.append("Price", Price);
+    formData.append("AnchorTag", selectedTag);
+    formData.append("SubPage", selectedUrl);
+    console.log("submitted" + selectedUrl);
 
     console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
@@ -109,7 +112,8 @@ function AddBacklink() {
 
   const handleSelect = (project) => {
     if (project) {
-      // console.log("Selected Project:", project)
+      console.log("Selected Project:", project)
+      // setSelectedUrl("");
       setProjectId(project.id);
       setSelectedProject(project.projectName);
       setProjectName(project.projectName);
@@ -130,8 +134,9 @@ function AddBacklink() {
 
   const fetchSitemapURL = async (project) => {
     try {
-      // console.log(project.sitemapURL)
-      const response = await axios.get(`http://207.180.203.98:5059/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
+      setUrls([]);
+      console.log(project.sitemapURL)
+      const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
         headers: {
           "Accept": "*/*",
         }
@@ -178,16 +183,94 @@ function AddBacklink() {
     setRows(rows.filter(row => row.id !== id))
   }
 
-  $(document).ready(function () {
-    $('.js-example-basic-single').select2();
-  });
-
   const handleBackLinkTypeChange = (type) => {
     setBackLinkType(type);
     if (type === "Free") {
       setPrice("0");
     }
   };
+
+  useEffect(() => {
+    // Initialize select2
+    $('.js-example-basic-single').select2();
+
+    // Bind the change event
+    $('.js-example-basic-single').on('change', function () {
+      const selectedProjectId = $(this).val();
+      const selectedProject = projects.find(
+        (p) => p.id.toString() === selectedProjectId
+      );
+      handleSelect(selectedProject);
+    });
+
+    // Cleanup
+    return () => {
+      $('.js-example-basic-single').off('change');
+      // $('.js-example-basic-single').select2('destroy');
+    };
+  }, [projects, handleSelect]);
+
+  useEffect(() => {
+    const $outReacher = $('#out-reacher');
+    const $approver = $('#approver');
+    const $contentWriter = $('#content-writer');
+  
+    // Initialize Select2
+    $outReacher.select2();
+    $approver.select2();
+    $contentWriter.select2();
+  
+    // Bind change events
+    $outReacher.on('change', function () {
+      const id = $(this).val();
+      const member = outReachers.find((m) => m.id.toString() === id);
+      if (member) {
+        setOutReacherTeamId(member.id);
+        setOutReacherName(member.memberName);
+      }
+    });
+  
+    $approver.on('change', function () {
+      const id = $(this).val();
+      const member = ApproverName.find((m) => m.id.toString() === id);
+      if (member) {
+        setApproverTeamId(member.id);
+        setapproverTeamName(member.memberName);
+      }
+    });
+  
+    $contentWriter.on('change', function () {
+      const id = $(this).val();
+      const member = contentWriters.find((m) => m.id.toString() === id);
+      if (member) {
+        setContentWriterTeamId(member.id);
+        setContentWriterName(member.memberName);
+      }
+    });
+  
+    // Cleanup
+    return () => {
+      const destroyIfInitialized = ($el) => {
+        if ($el.hasClass('select2-hidden-accessible')) {
+          $el.off('change').select2();
+        }
+      };
+  
+      destroyIfInitialized($outReacher);
+      destroyIfInitialized($approver);
+      destroyIfInitialized($contentWriter);
+    };
+  }, [
+    outReachers,
+    ApproverName,
+    contentWriters,
+    setOutReacherTeamId,
+    setOutReacherName,
+    setApproverTeamId,
+    setapproverTeamName,
+    setContentWriterTeamId,
+    setContentWriterName,
+  ]);
 
   return (
     <div className='mt-4 ms-3'>
@@ -207,28 +290,37 @@ function AddBacklink() {
                   <label htmlFor="">Select Project</label>
                   <FaCircleXmark onClick={() => removeRow(row.id)} className='cross d-lg-none' />
                 </div>
-                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{selectedProject}</a>
-                <ul className="dropdown-menu">
-                  <li className="dropdown-item">All</li>
+                <select className="form-select js-example-basic-single">
+                  <option value="">{selectedProject}</option>
                   {projects.map((project, index) => (
-                    <li className="dropdown-item" key={index} onClick={() => { handleSelect(project); fetchSitemapURL(project); }}>{project.projectName}</li>
+                    <option key={index} value={project.id}>
+                      {project.projectName}
+                    </option>
                   ))}
-                </ul>
+                </select>
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <label htmlFor="">Select Sub Page</label>
-                <select className="form-select js-example-basic-single" id="subPageSelect" onChange={(e) => setSelectedUrl(e.target.value)}>
-                  <option value="">Select Sub Page</option>
+                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {selectedUrl ? selectedUrl : "Select Sub Page"}
+                </a>
+                <ul className="dropdown-menu">
                   {urls.length > 0 ? (
                     urls.map((url, index) => (
-                      <option key={index} value={url}>
+                      <li 
+                        className="dropdown-item" 
+                        key={index} 
+                        onClick={() => {
+                          setSelectedUrl(url);
+                        }}
+                      >
                         {url}
-                      </option>
+                      </li>
                     ))
                   ) : (
-                    <option disabled>No Pages found</option>
+                    <li className="dropdown-item">No Pages Found</li>
                   )}
-                </select>
+                </ul>
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <div className='d-flex justify-content-between'>
@@ -267,7 +359,7 @@ function AddBacklink() {
               <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{LinkType || "Link Type"}</a>
               <ul className="dropdown-menu">
                 <li className="dropdown-item" onClick={() => setLinkType("Follow")}>Follow</li>
-                <li className="dropdown-item" onClick={() => setLinkType("Nofollow")}>Nofollow</li>
+                <li className="dropdown-item" onClick={() => setLinkType("NoFollow")}>NoFollow</li>
               </ul>
             </div>
             <div className="inputs d-flex flex-column col-12 mt-2">
@@ -295,45 +387,47 @@ function AddBacklink() {
               <input type="text" onChange={(e) => setTotalPages(e.target.value)} placeholder='Enter total pages' className='form-control' name="" id="" />
             </div>
             <div className="dropdown d-flex flex-column col-6 mt-2">
-              <label htmlFor="">Out Reacher</label>
-              <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{OutReacherName || "Select out reacher"}</a>
-              <ul className="dropdown-menu">
-                {
-                  outReachers.map((member, index) => (
-                    <li className="dropdown-item" key={index} onClick={() => {setOutReacherTeamId(member.id); setOutReacherName(member.memberName)}}>{member.memberName}</li>
-                  )) 
-                }
-              </ul>
+              <label>Out Reacher</label>
+              <select id="out-reacher" className="form-select js-example-basic-single">
+                <option value="">Select Out Reacher</option>
+                {outReachers.map((member, index) => (
+                  <option key={index} value={member.id}>
+                    {member.memberName}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div className="dropdown d-flex flex-column col-6 mt-1">
-              <label htmlFor="">Approved By</label>
-              <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{ApproverTeamName || "Approved By"}</a>
-              <ul className="dropdown-menu">
-                {
-                  ApproverName.map((member, index) => (
-                    <li className="dropdown-item" key={index} onClick={() => {setApproverTeamId(member.id); setapproverTeamName(member.memberName)}}>{member.memberName}</li>
-                  ))
-                }
-              </ul>
+              <label>Approved By</label>
+              <select id="approver" className="form-select js-example-basic-single">
+                <option value="">Select Approved By</option>
+                {ApproverName.map((member, index) => (
+                  <option key={index} value={member.id}>
+                    {member.memberName}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div className="dropdown d-flex flex-column col-6 mt-1">
-              <label htmlFor="">Content Writer</label>
-              <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{ContentWriterName || "Content Writer"}</a>
-              <ul className="dropdown-menu">
-                {
-                  contentWriters.map((member, index) => (
-                    <li className="dropdown-item" key={index} onClick={() => {setContentWriterTeamId(member.id); setContentWriterName(member.memberName);}}>{member.memberName}</li>
-                  ))
-                }
-              </ul>
+              <label>Content Writer</label>
+              <select id="content-writer" className="form-select js-example-basic-single">
+                <option value="">Select Content Writer</option>
+                {contentWriters.map((member, index) => (
+                  <option key={index} value={member.id}>
+                    {member.memberName}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="inputs d-flex flex-column col-6 mt-3">
               <label htmlFor="">Page Traffic</label>
-              <input type="text" onChange={(e) => setPageTraffic(e.target.value)} placeholder='Enter Page Traffic' className='form-control' name="" id=""/>
+              <input type="text" onChange={(e) => setPageTraffic(e.target.value)} placeholder='Enter Page Traffic' className='form-control' name="" id="" />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-3">
               <label htmlFor="">Content Link</label>
-              <input type="text" onChange={(e) => setContentLink(e.target.value)} placeholder='Content Link' className='form-control' name="" id=""/>
+              <input type="text" onChange={(e) => setContentLink(e.target.value)} placeholder='Content Link' className='form-control' name="" id="" />
             </div>
             <div className="dropdown d-flex flex-column col-6 mt-2">
               <label htmlFor="">Backlink Cost</label>

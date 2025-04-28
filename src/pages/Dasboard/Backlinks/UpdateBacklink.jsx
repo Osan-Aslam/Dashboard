@@ -69,6 +69,8 @@ function UpdateBacklink() {
 				setPrice(backlink.price);
 				setDealLink(backlink.dealLink);
 				setSelectedProject(backlink.project.projectName);
+				setSelectedTag(backlink.anchorTag);
+				setSelectedUrl(backlink.subPage);
 			} catch (error) {
 				console.log("Error Msg: ", error);
 			}
@@ -105,6 +107,8 @@ function UpdateBacklink() {
 		formData.append("ContentLink", ContentLink);
 		formData.append("DealType", DealType);
 		formData.append("Price", Price);
+		formData.append("AnchorTag", selectedTag);
+    	formData.append("SubPage", selectedUrl);
 
 		console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
@@ -252,18 +256,26 @@ function UpdateBacklink() {
 								</div>
 								<div className="dropdown d-flex flex-column col-lg-4">
 									<label htmlFor="">Select Sub Page</label>
-									<select className="form-select js-example-basic-single" id="subPageSelect" onChange={(e) => setSelectedUrl(e.target.value)}>
-										<option value={sitemapURL}>{selectedUrl || "Select Sub Page"}</option>
-										{urls.length > 0 ? (
-											urls.map((url, index) => (
-												<option key={index} value={url}>
-													{url}
-												</option>
-											))
-										) : (
-											<option disabled>No Pages found</option>
-										)}
-									</select>
+									<a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									{selectedUrl ? selectedUrl : "Select Sub Page"}
+									</a>
+									<ul className="dropdown-menu">
+									{urls.length > 0 ? (
+										urls.map((url, index) => (
+										<li 
+											className="dropdown-item" 
+											key={index} 
+											onClick={() => {
+												setSelectedUrl(url);
+											}}
+										>
+											{url}
+										</li>
+										))
+									) : (
+										<li className="dropdown-item">No Pages Found</li>
+									)}
+									</ul>
 								</div>
 								<div className="dropdown d-flex flex-column col-lg-4">
 									<div className='d-flex justify-content-between'>
@@ -302,7 +314,7 @@ function UpdateBacklink() {
 								<a className="btn dropdown-toggle" href="#" value={LinkType} role="button" data-bs-toggle="dropdown" aria-expanded="false">{LinkType || "Link Type"}</a>
 								<ul className="dropdown-menu">
 									<li className="dropdown-item" onClick={() => setLinkType("Follow")}>Follow</li>
-									<li className="dropdown-item" onClick={() => setLinkType("Nofollow")}>Nofollow</li>
+									<li className="dropdown-item" onClick={() => setLinkType("NoFollow")}>NoFollow</li>
 								</ul>
 							</div>
 							<div className="inputs d-flex flex-column col-12 mt-2">

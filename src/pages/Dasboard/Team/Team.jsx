@@ -15,7 +15,8 @@ import { RiDeleteBin4Fill } from "react-icons/ri";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import { error } from 'jquery';
+import $, { event } from "jquery";
 
 const Team = () => {
   const [members, setMembers] = useState([]);
@@ -33,7 +34,7 @@ const Team = () => {
 
   const handleDeleteConfirm = async () => {
 
-    if(memberToDelete) {
+    if (memberToDelete) {
 
       try {
         const deleteUrl = `http://207.180.203.98:5059/api/team-members/${memberToDelete.id}`;
@@ -44,7 +45,7 @@ const Team = () => {
           }
         })
         // console.log("Delete Response: ", response);
-        
+
         setMembers((prevMember) => prevMember.filter(member => member.id !== memberToDelete.id));
       } catch (error) {
         console.error("Error deleting member:", error.response?.data || error.message);
@@ -68,10 +69,10 @@ const Team = () => {
         const memberWithImages = await Promise.all(
           fetchMembers.map(async (member) => {
             const profilePictureUrl = await fetchProfilePicture(member.profilePictureUrl);
-            return {...member, profilePictureUrl};
+            return { ...member, profilePictureUrl };
           })
         )
-        // console.log("Fetched Member:", response.data);
+        console.log("Fetched Member:", response.data);
         setMembers(memberWithImages);
         // console.log(members.profilePictureUrl);
       } catch (error) {
@@ -81,8 +82,22 @@ const Team = () => {
     fetchMembers();
   }, []);
 
+  const copyToClipboard = (email) => {
+    navigator.clipboard.writeText(email)
+      .then(() => {
+        $(".email-copied").removeClass("d-none");
+        $(".email-copied").text(`Copied: ${email}`);
+        setTimeout(() => {
+          $(".email-copied").addClass("d-none");
+        }, 3000);
+      })
+      .catch(error => {
+        console.error(`Could not copy emial: `, error);
+      });
+  };
+
   const fetchProfilePicture = async (profilePath) => {
-    if(!profilePath) return TeamImage;
+    if (!profilePath) return TeamImage;
     try {
       const response = await axios.get(
         `http://207.180.203.98:5059/api/team-members/profile-picture?profilePath=${profilePath}`,
@@ -102,7 +117,7 @@ const Team = () => {
     (member.memberName.toLowerCase().includes(search.toLowerCase())) && (selectedDesignation === "All Members" || member.designation === selectedDesignation)
   );
 
-  const handleDesignationChange  = (designation) => {
+  const handleDesignationChange = (designation) => {
     setSelectedDesignation(designation)
   }
 
@@ -133,53 +148,49 @@ const Team = () => {
           </div>
         </div>
       </div>
+      <div className='alert alert-danger p-2 col-3 mx-auto text-center email-copied d-none'>Email Copied</div>
       <div className='row m-auto'>
         {filterMember.length === 0 ? (
           <p></p>
         ) : (
           filterMember.map((member) => (
-          <div className="col-lg-4" key={member.id}>
-            <div className="card mb-3">
-              <div className="row g-0 align-items-center">
-                <>
-                  <div className="col-md-4 text-center">
-                    <img src={member.profilePictureUrl || TeamImage} className="img-fluid" alt={member.memberName} />
-                  </div>
-                  <div className="col-md-8">
-                    <div className="card-body text-lg-start text-center">
-                      <h5 className="card-title mb-1">{member.memberName}</h5>
-                      <p className="card-text mb-1">{member.designation}</p>
-                      <div>
-                        <Link to={`/team/viewMember/${member.id}`}>
-                          <FaEye className='icon' />
-                        </Link>
-                        <Link to={`/team/updateMember/${member.id}`}>
-                          <HiPencil className='icon' />
-                        </Link>
-                        <FaRegEnvelope className='icon' />
-                        <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
+            <div className="col-lg-4" key={member.id}>
+              <div className="card mb-3">
+                <div className="row g-0 align-items-center">
+                  <>
+                    <div className="col-md-4 text-center">
+                      <img src={member.profilePictureUrl || TeamImage} className="img-fluid" alt={member.memberName} />
+                    </div>
+                    <div className="col-md-8">
+                      <div className="card-body text-lg-start text-center">
+                        <h5 className="card-title mb-1">{member.memberName}</h5>
+                        <p className="card-text mb-1">{member.designation}</p>
+                        <div>
+                          <Link to={`/team/viewMember/${member.id}`}>
+                            <FaEye className='icon' />
+                          </Link>
+                          <Link to={`/team/updateMember/${member.id}`}>
+                            <HiPencil className='icon' />
+                          </Link>
+                          <FaRegEnvelope className='icon' onClick={() => copyToClipboard(member.email)} />
+                          <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </>
+                  </>
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
       </div>
 
-      <Modal
-        show={show}
-        onHide={handleDeleteCancel}
-        backdrop="static"
-        keyboard={false}
-      >
+      <Modal show={show} onHide={handleDeleteCancel} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Delete</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          You Want To Delete this Member?
+        <Modal.Body className='text-center'>
+          <span><p className='mb-0'>You Want To Delete this Member?</p>"All backlinks associated with this Team Member will be removed."</span>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDeleteCancel}>Close</Button>

@@ -219,14 +219,7 @@ function Backlink() {
                     <h5>No Backlinks Found</h5>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="10" className='text-center'>
-                  <h5>No Backlinks Found</h5>
-                </td>
-              </tr>
-            )}
+              )}
           </tbody>
         </table>
 

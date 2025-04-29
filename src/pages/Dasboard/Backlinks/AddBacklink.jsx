@@ -225,27 +225,7 @@ function AddBacklink() {
                 <Select className='selectDropdown' options={formattedProjects} onChange={(option) => { const selected = projects.find(p => p.id === option.value); handleSelect(selected); }} placeholder="Select a project"/>
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
-                <label htmlFor="">Select Sub Page</label>
-                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {selectedUrl ? selectedUrl : "Select Sub Page"}
-                </a>
-                <ul className="dropdown-menu">
-                  {urls.length > 0 ? (
-                    urls.map((url, index) => (
-                      <li 
-                        className="dropdown-item" 
-                        key={index} 
-                        onClick={() => {
-                          setSelectedUrl(url);
-                        }}
-                      >
-                        {url}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="dropdown-item">No Pages Found</li>
-                  )}
-                </ul>
+                <label htmlFor="">Select Sub Page</label>                
                 <Select className='selectDropdown' options={urls.map(url => ({ value: url, label: url }))} onChange={(option) => setSelectedUrl(option.value)} placeholder="Select a page URL" />
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">

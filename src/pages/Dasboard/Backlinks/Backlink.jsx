@@ -165,7 +165,8 @@ function Backlink() {
                   <tr key={index}>
                     <td className='d-flex flex-column'>
                       <a className='projectlink' target='_blank' href={backlink.project?.projectURL}>{backlink.project?.projectURL}</a>
-                      <a className="sublink" href="#"> {"/" + backlink.subPage.replace(backlink.project.projectURL, '')} </a>
+                      <a className="sublink" href="#"> {backlink.subPage && backlink.project?.projectURL ? "/" + backlink.subPage.replace(backlink.project.projectURL, '') : ''}
+                      </a>
                       <div className='mt-1'>
                         <span><Badge>{backlink.anchorTag}</Badge></span>
                       </div>

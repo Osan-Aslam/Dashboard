@@ -69,6 +69,9 @@ function AddBacklink() {
     formData.append("ContentLink", ContentLink);
     formData.append("DealType", DealType);
     formData.append("Price", Price);
+    formData.append("AnchorTag", selectedTag);
+    formData.append("SubPage", selectedUrl);
+    console.log("submitted" + selectedUrl);
 
     console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
@@ -110,7 +113,7 @@ function AddBacklink() {
   const handleSelect = (project) => {
     if (project) {
       console.log("Selected Project:", project)
-      setSelectedUrl("");
+      // setSelectedUrl("");
       setProjectId(project.id);
       setSelectedProject(project.projectName);
       setProjectName(project.projectName);
@@ -223,6 +226,26 @@ function AddBacklink() {
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <label htmlFor="">Select Sub Page</label>
+                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {selectedUrl ? selectedUrl : "Select Sub Page"}
+                </a>
+                <ul className="dropdown-menu">
+                  {urls.length > 0 ? (
+                    urls.map((url, index) => (
+                      <li 
+                        className="dropdown-item" 
+                        key={index} 
+                        onClick={() => {
+                          setSelectedUrl(url);
+                        }}
+                      >
+                        {url}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="dropdown-item">No Pages Found</li>
+                  )}
+                </ul>
                 <Select className='selectDropdown' options={urls.map(url => ({ value: url, label: url }))} onChange={(option) => setSelectedUrl(option.value)} placeholder="Select a page URL" />
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">

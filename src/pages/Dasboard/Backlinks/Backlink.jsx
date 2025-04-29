@@ -17,6 +17,13 @@ function Backlink() {
   const [filteredBacklinks, setFilteredBacklinks] = useState([]);
   const [filters, setFilters] = useState({});
   const [selectedSort, setSelectedSort] = useState('Low to high price');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+
 
   useEffect(() => {
     const fetchBacklinks = async () => {
@@ -65,6 +72,12 @@ function Backlink() {
         return sorted;
     }
   }, [selectedSort, filteredBacklinks]);
+
+  const currentItems = useMemo(() => {
+    return sortedBacklinks.slice(indexOfFirstItem, indexOfLastItem);
+  }, [sortedBacklinks, indexOfFirstItem, indexOfLastItem]);
+
+  const totalPages = Math.ceil(filteredBacklinks.length / itemsPerPage);
 
   const copyToClipboard = (email) => {
     navigator.clipboard.writeText(email)
@@ -174,6 +187,17 @@ function Backlink() {
     setFilteredBacklinks(filtered);
   };
 
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleItemsPerPageChange = (count) => {
+    setItemsPerPage(count);
+    setCurrentPage(1);  // Reset to the first page when items per page changes
+  };
+
   return (
     <>
       <div className='d-flex align-items-center justify-content-between p-2'>
@@ -223,11 +247,11 @@ function Backlink() {
           <tbody className='backlinks'>
             {
               sortedBacklinks.length > 0 ? (
-                sortedBacklinks.map((backlink, index) => (
+                currentItems.map((backlink, index) => (
                   <tr key={index}>
                     <td className='d-flex flex-column'>
-                      <a className='projectlink' target='_blank' href={backlink.project.projectURL}>{backlink.project.projectURL}</a>
-                      <a className='sublink' href="#">{backlink.project.projectName}</a>
+                      <a className='projectlink' target='_blank' href={backlink.project?.projectURL}>{backlink.project?.projectURL}</a>
+                      <a className='sublink' href="#">{backlink.project?.projectName}</a>
                       <div className='mt-1'>
                         <span><Badge>{backlink.anchorTags}</Badge></span>
                       </div>
@@ -255,20 +279,20 @@ function Backlink() {
                       <span><Badge>{backlink.linkType}</Badge></span>
                     </td>
                     <td>
-                      <p>{backlink.outReacher.memberName}</p>
-                      <span className='breaklink outReacherEmail'>{backlink.outReacher.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
+                      <p>{backlink.outReacher?.memberName}</p>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher?.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
                     </td>
                     <td>
-                      <span>{backlink.approver.memberName}</span>
+                      <span>{backlink.approver?.memberName}</span>
                     </td>
                     <td>
-                      <p>{backlink.contentWriter.memberName}</p>
+                      <p>{backlink.contentWriter?.memberName}</p>
                       <a target='_blank' href={backlink.contentLink}>Article Link <FaExternalLinkAlt /></a>
                     </td>
                     <td>
                       <p>{backlink.dealType}</p>
                     </td>
-                    <td>{`$${formatNumber(backlink.price)}`}</td>
+                    <td>{`${formatNumber(backlink.price)}`}</td>
                     <td className='d-flex'>
                       <Link to={`/backlink/viewbacklink/${backlink.id}`} className='btn dashboard-btn'><FaEye /> View</Link>
                       <Link to={`/backlink/updatebacklink/${backlink.id}`} className='btn dashboard-btn'><MdEdit /> Edit</Link>
@@ -287,21 +311,47 @@ function Backlink() {
         <div className='d-flex align-items-center justify-content-between'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">
-              <li className="page-item"><a className="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
-              <li className="page-item"><a className="page-link active" href="#">1</a></li>
-              <li className="page-item"><a className="page-link" href="#">2</a></li>
-              <li className="page-item"><a className="page-link" href="#">3</a></li>
-              <li className="page-item"><a className="page-link" href="#">Next <IoIosArrowForward /></a></li>
+              {/* Prev Button */}
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+                  <IoIosArrowBack /> Prev
+                </button>
+              </li>
+
+              {/* Show page numbers (1, 2, 3 only) */}
+              {[1, 2, 3].map((pageNum) => (
+                pageNum <= totalPages && (
+                  <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(pageNum)}>
+                      {pageNum}
+                    </button>
+                  </li>
+                )
+              ))}
+
+              {/* Show "..." if more pages exist */}
+              {totalPages > 3 && <li className="page-item disabled"><span className="page-link">...</span></li>}
+
+              {/* Next Button */}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                  Next <IoIosArrowForward />
+                </button>
+              </li>
             </ul>
           </nav>
           <div className='d-flex align-items-center viewTime'>
             <span>Show:</span>
             <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
+              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                {itemsPerPage} Per Page
+              </button>
               <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">20 Per Page</li>
-                <li className="dropdown-item">30 Per Page</li>
-                <li className="dropdown-item">40 Per Page</li>
+                {[10, 20, 30, 40].map((count) => (
+                  <li key={count} className="dropdown-item" onClick={() => handleItemsPerPageChange(count)}>
+                    {count} Per Page
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

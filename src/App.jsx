@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {BrowserRouter as Router, Routes, Route, useLocation, Outlet, createBrowserRouter, RouterProvider, useNavigate} from "react-router-dom";
 import SignIn from "./pages/signIn/SignIn";
-import Signup from "./pages/signUp/SignUp";
 import Dashboard from './pages/Dasboard/dashboard/Dashboard'
 import Navbar from "./pages/navbar/Navbar"
 import AddProject from "./pages/Dasboard/Project/AddProject"
@@ -79,10 +78,6 @@ const router = createBrowserRouter([
             path: "signin",
             element: <SignIn/>,
           },
-          {
-            path: "signup",
-            element: <Signup/>,
-          },
         ],
       },
       {
@@ -151,8 +146,7 @@ const router = createBrowserRouter([
           {
             path: "backlink/viewbacklink/:id",
             element: <ViewBacklink />
-          }
-
+          },
         ],
       },
     ],

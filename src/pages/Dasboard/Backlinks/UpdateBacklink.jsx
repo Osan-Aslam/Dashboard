@@ -216,7 +216,7 @@ function UpdateBacklink() {
 	useEffect(() => {
 		if (Price > 0) {
 			setBackLinkType("Paid");
-		} 
+		}
 		else if (Price <= 0) {
 			setBackLinkType("Free");
 		}
@@ -306,27 +306,27 @@ function UpdateBacklink() {
 							</div>
 							<div className="inputs d-flex flex-column col-12 mt-2">
 								<label htmlFor="liveLink">Live Link</label>
-								<input type="text" value={LiveLink} onChange={(e) => setLiveLink(e.target.value)} placeholder='Enter Live link' className='form-control'/>
+								<input type="text" value={LiveLink} onChange={(e) => setLiveLink(e.target.value)} placeholder='Enter Live link' className='form-control' />
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-1">
 								<label htmlFor="domainTraffic">Domain Traffic</label>
-								<input type="text" value={DomainTraffic} onChange={(e) => setDomainTraffic(e.target.value)} placeholder='Enter Domain Traffic' className='form-control' name="" id="" />
+								<input type="number" value={DomainTraffic} onChange={(e) => setDomainTraffic(e.target.value)} placeholder='Enter Domain Traffic' className='form-control' name="" id="" />
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-1">
 								<label htmlFor="uSTraffic">US Traffic</label>
-								<input type="text" value={USTraffic} onChange={(e) => setUSTraffic(e.target.value)} placeholder='Enter US Traffic' className='form-control' name="" id="" />
+								<input type="number" value={USTraffic} onChange={(e) => setUSTraffic(e.target.value)} placeholder='Enter US Traffic' className='form-control' name="" id="" />
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-2">
 								<label htmlFor="domainRating">DR</label>
-								<input type="text" value={DomainRating} onChange={(e) => setDomainRating(e.target.value)} placeholder='Enter Domain Ratting' className='form-control' name="" id="" />
+								<input type="number" value={DomainRating} onChange={(e) => setDomainRating(e.target.value)} placeholder='Enter Domain Ratting' className='form-control' name="" id="" />
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-2">
 								<label htmlFor="domainAuthority">DA</label>
-								<input type="text" value={DomainAuthority} onChange={(e) => setDomainAuthority(e.target.value)} placeholder='Enter Domain Authority' className='form-control' name="" id="" />
+								<input type="number" value={DomainAuthority} onChange={(e) => setDomainAuthority(e.target.value)} placeholder='Enter Domain Authority' className='form-control' name="" id="" />
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-2">
 								<label htmlFor="totalPages">Total Pages</label>
-								<input type="text" value={TotalPages} onChange={(e) => setTotalPages(e.target.value)} placeholder='Enter total pages' className='form-control' name="" id="" />
+								<input type="number" value={TotalPages} onChange={(e) => setTotalPages(e.target.value)} placeholder='Enter total pages' className='form-control' name="" id="" />
 							</div>
 							<div className="dropdown d-flex flex-column col-6 mt-2">
 								<label htmlFor="uutReacher">Out Reacher</label>
@@ -379,7 +379,7 @@ function UpdateBacklink() {
 							</div>
 							<div className="inputs d-flex flex-column col-6 mt-2">
 								<label htmlFor="">Price</label>
-								<input type="text" value={Price} onChange={(e) => setPrice(e.target.value)} placeholder='Enter Price' className='form-control' name="" id="" disabled={backLinkType === "Free"} />
+								<input type="number" value={Price} onChange={(e) => setPrice(e.target.value)} placeholder='Enter Price' className='form-control' name="" id="" disabled={backLinkType === "Free"} />
 							</div>
 						</div>
 						<div className='text-center mt-3'>

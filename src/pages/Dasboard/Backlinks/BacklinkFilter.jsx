@@ -3,6 +3,7 @@ import { BsFilterLeft } from "react-icons/bs";
 import $ from "jquery";
 import axios from 'axios';
 import 'select2';
+import Select from 'react-select'
 
 function BacklinkFilter({ onApplyFilters }) {
   const [selectedProject, setSelectedProject] = useState("");
@@ -16,7 +17,6 @@ function BacklinkFilter({ onApplyFilters }) {
   const [error, setError] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedUrl, setSelectedUrl] = useState("");
-  const [OutReacherTeamId, setOutReacherTeamId] = useState("");
   const [OutReacherName, setOutReacherName] = useState("");
   const [teamMembers, setTeamMembers] = useState([]);
   const [dealType, setdealType] = useState("");
@@ -36,7 +36,6 @@ function BacklinkFilter({ onApplyFilters }) {
   const [mozDrMax, setMozDrMax] = useState("");
   const [mozDaMin, setMozDaMin] = useState("");
   const [mozDaMax, setMozDaMax] = useState("");
-  const outReacherRef = useRef();
 
   const handleSelect = (project) => {
     if (project) {
@@ -81,7 +80,6 @@ function BacklinkFilter({ onApplyFilters }) {
           headers: { "Accept": "*/*" },
         });
         const sitemapURL = response.data.map(project => project.sitemapURL)
-        // console.log(sitemapURL)
         setProjects(response.data);
       } catch (error) {
         const errorMsg = console.error("Failed to fetch projects:", error);
@@ -97,70 +95,20 @@ function BacklinkFilter({ onApplyFilters }) {
       try {
         const response = await axios.get("http://207.180.203.98:5030/api/team-members");
         setTeamMembers(response.data);
-        // console.log(response.data);
       } catch (error) {
         console.error("Error fetching team members:", error);
       }
     };
     fetchMembers();
   }, []);
-  const contentWriters = teamMembers.filter(member =>
-    member.designation === "Content Writer"
-  );
   const outReachers = teamMembers.filter(member =>
     member.designation === "Out Reacher"
   );
-  const ApproverName = teamMembers.filter(member =>
-    member.designation === "Manager"
-  );
 
-  useEffect(() => {
-    // Initialize select2
-    $('.js-example-basic-single').select2();
-
-    // Bind the change event
-    $('.js-example-basic-single').on('change', function () {
-      const selectedProjectId = $(this).val();
-      const selectedProject = projects.find(
-        (p) => p.id.toString() === selectedProjectId
-      );
-      handleSelect(selectedProject);
-    });
-
-    // Cleanup
-    return () => {
-      $('.js-example-basic-single').each(function () {
-        const $el = $(this);
-        if ($el.data('select2')) {
-          $el.off('change').select2('destroy');
-        }
-      });
-    };
-  }, [projects, handleSelect]);
-
-  useEffect(() => {
-    const $outReacher = $(outReacherRef.current);
-
-    // Initialize Select2
-    $outReacher.select2();
-
-    // Change event
-    $outReacher.on('change', function () {
-      const id = $(this).val();
-      const member = outReachers.find((m) => m.id.toString() === id);
-      if (member) {
-        setOutReacherTeamId(member.id);
-        setOutReacherName(member.memberName);
-      }
-    });
-
-    // Cleanup
-    return () => {
-      if ($outReacher.data('select2')) {
-        $outReacher.off('change').select2('destroy');
-      }
-    };
-  }, [outReachers, setOutReacherTeamId, setOutReacherName]);
+  const formattedProjects = projects.map(project => ({
+    value: project.id,
+    label: project.projectName,
+  }));
 
   useEffect(() => {
     fetch('/tlds.txt')
@@ -206,6 +154,7 @@ function BacklinkFilter({ onApplyFilters }) {
       mozDaMax,
       mozDrMin,
       mozDrMax,
+      backlinkType,
     };
     console.log(filterValues);
     onApplyFilters(filterValues); // Call parent function
@@ -248,55 +197,26 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By project</label>
-                    <select className="form-select js-example-basic-single">
-                      <option value="">{selectedProject || "All"}</option>
-                      {projects.map((project, index) => (
-                        <option key={index} value={project.id}>
-                          {project.projectName}
-                        </option>
-                      ))}
-                    </select>
+                    <Select className='selectDropdown' options={formattedProjects} onChange={(option) => { const selected = projects.find(p => p.id === option.value); handleSelect(selected); }} placeholder="Select a project" />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Sub Page</label>
-                    <select className="form-select js-example-basic-single" id="subPageSelect" onChange={(e) => setSelectedUrl(e.target.value)}>
-                      <option value="">Select Sub Page</option>
-                      {urls.length > 0 ? (
-                        urls.map((url, index) => (
-                          <option key={index} value={url}>
-                            {url}
-                          </option>
-                        ))
-                      ) : (
-                        <option disabled>No Pages found</option>
-                      )}
-                    </select>
+                    <Select className='selectDropdown' options={urls.map(url => ({ value: url, label: url }))} onChange={(option) => setSelectedUrl(option.value)} placeholder="Select a page URL" />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By Anchor</label>
-                    <select className="form-select js-example-basic-single" value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)}>
-                      <option value="">Select Anchor Text</option>
-                      {anchorTags.length > 0 ? (
-                        anchorTags.map((tag, index) => (
-                          <option className="dropdown-item" key={index} value={tag}>
-                            {tag}
-                          </option>
-                        ))
-                      ) : (
-                        <option className="dropdown-item" disabled> No Tags Found</option>
-                      )}
-                    </select>
+                    <Select className="selectDropdown" options={anchorTags.length > 0 ? anchorTags.map(tag => ({ value: tag, label: tag })) : []}
+                      value={selectedTag ? { value: selectedTag, label: selectedTag } : null}
+                      onChange={(option) => setSelectedTag(option?.value || "")}
+                      placeholder="Select Anchor Text"
+                    />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Out Reacher</label>
-                    <select id="out-reacher" className="form-select js-example-basic-single" value={OutReacherName} onChange={(e) => setOutReacherName(e.target.value)}>
-                      <option value="">Select Out Reacher</option>
-                      {outReachers.map((member) => (
-                        <option key={member.id} value={member.id}>
-                          {member.memberName}
-                        </option>
-                      ))}
-                    </select>
+                    <Select className="selectDropdown" options={outReachers.map(member => ({ value: member.id, label: member.memberName }))}
+                      onChange={(option) => setOutReacherName(option)}
+                      placeholder="Select Out Reacher"
+                    />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">Link Type</label>
@@ -344,7 +264,7 @@ function BacklinkFilter({ onApplyFilters }) {
                     <div className='d-flex align-items-center'>
                       <input className='form-control' placeholder='Min' type="number" value={mozDrMin} onChange={(e) => setMozDrMin(e.target.value)} />
                       <span className='me-1 mb-2'>-</span>
-                      <input className='form-control' placeholder='Max' type="number" value={mozDrMax} onChange={(e) => setMozDrMax(e.target.value)}  />
+                      <input className='form-control' placeholder='Max' type="number" value={mozDrMax} onChange={(e) => setMozDrMax(e.target.value)} />
                     </div>
                   </div>
                   <div className='col-lg-2 priceRange'>
@@ -357,25 +277,18 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">Language</label>
-                    <select id="languageSelect" className="form-select js-example-basic-single" value={selectedLang} onChange={(e) => setSelectedLang(e.target.value)}>
-                      <option value="SelectLanguage">Select Language</option>
-                      {languages.map((lang, idx) => (
-                        <option key={idx} value={lang.code}>
-                          {lang.name}
-                        </option>
-                      ))}
-                    </select>
+                    <Select className="selectDropdown" id="languageSelect" options={languages.map(lang => ({ value: lang.code, label: lang.name }))}
+                      value={selectedLang}
+                      onChange={(option) => setSelectedLang(option)}
+                      placeholder="Select Language"
+                    />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">TLD</label>
-                    <select className="js-example-basic-single form-select" value={selectedTld} onChange={(e) => setSelectedTld(e.target.value)}>
-                      <option value="">Select TLD</option>
-                      {tlds.map((tld, index) => (
-                        <option key={index} value={tld}>
-                          {tld}
-                        </option>
-                      ))}
-                    </select>
+                    <Select className="selectDropdown" options={tlds.map(tld => ({ value: tld, label: tld }))} value={selectedTld ? { value: selectedTld, label: selectedTld } : null}
+                      onChange={(option) => setSelectedTld(option?.value || "")}
+                      placeholder="Select TLD"
+                    />
                   </div>
                 </div>
                 <button className='btn dashboard-btn py-2 px-3' onClick={handleApplyFilters}>Apply Filters</button>

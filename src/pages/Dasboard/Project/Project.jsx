@@ -19,6 +19,20 @@ function Project() {
   const [show, setShow] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [backlinks, setBacklinks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const filteredProjects = projects.filter(project =>
+    project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
 
 
   useState(() => {
@@ -144,7 +158,7 @@ function Project() {
           <tbody>
             {
               projects.length > 0 ? (
-                projects.filter(project => project.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+                paginatedProjects.filter(project => project.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((project, index) => {
                     const projectBacklinks = backlinks.filter(b => b.project?.id === project.id);
                     const totalBacklinks = projectBacklinks.length;
@@ -167,7 +181,7 @@ function Project() {
                         <td>{followLinks}</td>
                         <td>{noFollowLinks}</td>
                         <td>{lostLinks}</td>
-                        <td>${formatNumber(totalPaid.toFixed(2))}</td>
+                        <td>{formatNumber(totalPaid.toFixed(2))}</td>
                         <td className='d-flex'>
                           <Link to={`/project/viewproject/${project.id}`}>
                             <button className='btn dashboard-btn'><FaEye /> View</button>
@@ -181,7 +195,11 @@ function Project() {
                     );
                   })
               ) : (
-                <p>no Projects</p>
+                <tr>
+                  <td colSpan="10" className='text-center'>
+                    <h5>No Prject Found</h5>
+                  </td>
+                </tr>
               )
             }
           </tbody>
@@ -189,23 +207,46 @@ function Project() {
         <div className='d-flex align-items-center justify-content-between'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">
-              <li className="page-item"><a className="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
-              <li className="page-item"><a className="page-link active" href="#">1</a></li>
-              <li className="page-item"><a className="page-link" href="#">2</a></li>
-              <li className="page-item"><a className="page-link" href="#">3</a></li>
-              <li className="page-item"><a className="page-link" href="#">Next <IoIosArrowForward /></a></li>
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>
+                  <IoIosArrowBack /> Prev
+                </button>
+              </li>
+
+              {[...Array(totalPages)].map((_, idx) => (
+                <li key={idx} className={`page-item ${currentPage === idx + 1 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(idx + 1)}>
+                    {idx + 1}
+                  </button>
+                </li>
+              ))}
+
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}>
+                  Next <IoIosArrowForward />
+                </button>
+              </li>
             </ul>
+
           </nav>
           <div className='d-flex align-items-center viewTime'>
             <span>Show:</span>
-            <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
+            <div className='dropdown'>
+              <button className="btn dropdown-toggle" data-bs-toggle="dropdown">
+                {itemsPerPage} Per Page
+              </button>
               <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">20 Per Page</li>
-                <li className="dropdown-item">30 Per Page</li>
-                <li className="dropdown-item">40 Per Page</li>
+                {[10, 20, 30, 40].map(num => (
+                  <li key={num} className="dropdown-item" onClick={() => {
+                    setItemsPerPage(num);
+                    setCurrentPage(1); // reset to first page
+                  }}>
+                    {num} Per Page
+                  </li>
+                ))}
               </ul>
             </div>
+
           </div>
         </div>
       </div>

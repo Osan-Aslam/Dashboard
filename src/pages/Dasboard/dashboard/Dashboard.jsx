@@ -68,7 +68,7 @@ function Dashboard() {
   const totalLinkInsertions = backlinks.filter(b => b.dealType === "Link Insertion").length;
   const totalLostLinks = backlinks.filter(b => b.lostDate !== null).length;
   const totalDoFollow = backlinks.filter(b => b.linkType === "Follow").length;
-  const totalNoFollow = backlinks.filter(b => b.linkType === "Nofollow").length;
+  const totalNoFollow = backlinks.filter(b => b.linkType === "NoFollow").length;
   const totalSpent = backlinks.reduce((sum, b) => sum + (b.price || 0), 0).toFixed(2);
   const totalTeamMembers = teamMembers.length;
 
@@ -76,7 +76,7 @@ function Dashboard() {
     { value: totalBacklinks, label: 'Total Backlinks' },
     { value: totalProjects, label: 'Total Projects' },
     { value: totalTeamMembers, label: 'Team Members' },
-    { value: `$${formatNumber(totalSpent)}`, label: 'Total Spent' },
+    { value: `${formatNumber(totalSpent)}`, label: 'Total Spent' },
     { value: totalGuestPosts, label: 'Total Guest posts' },
     { value: totalLinkInsertions, label: 'Total Link Insertion' },
     { value: totalLostLinks, label: 'Total Lost Links' },

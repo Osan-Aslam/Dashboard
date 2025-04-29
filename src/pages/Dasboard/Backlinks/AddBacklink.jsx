@@ -1,16 +1,15 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import { FaPlus } from "react-icons/fa6";
 import { FaCircleXmark } from "react-icons/fa6";
-import $, { event } from "jquery";
 import axios from 'axios';
 import 'select2';
 import 'select2/dist/css/select2.min.css';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select'
 
 function AddBacklink() {
   const [ProjectId, setProjectId] = useState("");
   const [projectName, setProjectName] = useState("");
-  const [dealLink, setDealLink] = useState("");
   const [DomainAuthority, setDomainAuthority] = useState("");
   const [DomainRating, setDomainRating] = useState("");
   const [TotalPages, setTotalPages] = useState("");
@@ -31,7 +30,7 @@ function AddBacklink() {
   const [selectedProject, setSelectedProject] = useState("Select Project");
   const [error, setError] = useState("");
   const [urls, setUrls] = useState([]);
-  const [selectedUrl, setSelectedUrl] = useState("Select Sub Page");
+  const [selectedUrl, setSelectedUrl] = useState("");
   const [sitemapURL, setSitemapURL] = useState("");
   const [anchorTags, setAnchorTags] = useState("");
   const [selectedTag, setSelectedTag] = useState(null);
@@ -39,6 +38,8 @@ function AddBacklink() {
   const [ContentWriterName, setContentWriterName] = useState("");
   const [OutReacherName, setOutReacherName] = useState("");
   const [ApproverTeamName, setapproverTeamName] = useState("");
+  const [languages, setLanguages] = useState([]);
+  const [selectedLang, setSelectedLang] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -99,7 +100,6 @@ function AddBacklink() {
           headers: { "Accept": "*/*" },
         });
         const sitemapURL = response.data.map(project => project.sitemapURL)
-        // console.log(sitemapURL)
         setProjects(response.data);
       } catch (error) {
         const errorMsg = console.error("Failed to fetch projects:", error);
@@ -119,9 +119,7 @@ function AddBacklink() {
       setProjectName(project.projectName);
       setSitemapURL(project.sitemapURL);
       setprojectURL(project.projectURL);
-      setAnchorTags(project.anchorTags)
-      // console.log(project.anchorTags);
-      // console.log("Selected sitemap URL:", project.sitemapURL);
+      setAnchorTags(Array.isArray(project.anchorTags) ? project.anchorTags : []);
       if (project.sitemapURL) {
         fetchSitemapURL(project);
       } else {
@@ -158,7 +156,6 @@ function AddBacklink() {
       try {
         const response = await axios.get("http://207.180.203.98:5030/api/team-members");
         setTeamMembers(response.data);
-        // console.log(response.data);
       } catch (error) {
         console.error("Error fetching team members:", error);
       }
@@ -193,87 +190,22 @@ function AddBacklink() {
     }
   };
 
-  useEffect(() => {
-    // Initialize select2
-    $('.js-example-basic-single').select2();
-
-    // Bind the change event
-    $('.js-example-basic-single').on('change', function () {
-      const selectedProjectId = $(this).val();
-      const selectedProject = projects.find(
-        (p) => p.id.toString() === selectedProjectId
-      );
-      handleSelect(selectedProject);
-    });
-
-    // Cleanup
-    return () => {
-      $('.js-example-basic-single').off('change');
-      // $('.js-example-basic-single').select2('destroy');
-    };
-  }, [projects, handleSelect]);
+  const formattedProjects = projects.map(project => ({
+    value: project.id,
+    label: project.projectName,
+  }));
 
   useEffect(() => {
-    const $outReacher = $('#out-reacher');
-    const $approver = $('#approver');
-    const $contentWriter = $('#content-writer');
-  
-    // Initialize Select2
-    $outReacher.select2();
-    $approver.select2();
-    $contentWriter.select2();
-  
-    // Bind change events
-    $outReacher.on('change', function () {
-      const id = $(this).val();
-      const member = outReachers.find((m) => m.id.toString() === id);
-      if (member) {
-        setOutReacherTeamId(member.id);
-        setOutReacherName(member.memberName);
-      }
-    });
-  
-    $approver.on('change', function () {
-      const id = $(this).val();
-      const member = ApproverName.find((m) => m.id.toString() === id);
-      if (member) {
-        setApproverTeamId(member.id);
-        setapproverTeamName(member.memberName);
-      }
-    });
-  
-    $contentWriter.on('change', function () {
-      const id = $(this).val();
-      const member = contentWriters.find((m) => m.id.toString() === id);
-      if (member) {
-        setContentWriterTeamId(member.id);
-        setContentWriterName(member.memberName);
-      }
-    });
-  
-    // Cleanup
-    return () => {
-      const destroyIfInitialized = ($el) => {
-        if ($el.hasClass('select2-hidden-accessible')) {
-          $el.off('change').select2();
+    fetch('/languages.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setLanguages(data);
+        if (data.length > 0) {
+          setSelectedLang(data.code);
         }
-      };
-  
-      destroyIfInitialized($outReacher);
-      destroyIfInitialized($approver);
-      destroyIfInitialized($contentWriter);
-    };
-  }, [
-    outReachers,
-    ApproverName,
-    contentWriters,
-    setOutReacherTeamId,
-    setOutReacherName,
-    setApproverTeamId,
-    setapproverTeamName,
-    setContentWriterTeamId,
-    setContentWriterName,
-  ]);
+      })
+      .catch((err) => console.error("Error fetching languages:", err));
+  }, []);
 
   return (
     <div className='mt-4 ms-3'>
@@ -286,60 +218,25 @@ function AddBacklink() {
         )}
         <form className='w-100' onSubmit={handleSubmit}>
           <span className='details pb-2'>Projects ({rows.length})</span>
-          {rows.map((row, index) => (
+          {rows.map((row) => (
             <div key={row.id} className='row flex-lg-nowrap all-dropdown mb-3'>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <div className='d-flex align-items-center justify-content-between'>
                   <label htmlFor="">Select Project</label>
                   <FaCircleXmark onClick={() => removeRow(row.id)} className='cross d-lg-none' />
                 </div>
-                <select className="form-select js-example-basic-single">
-                  <option value="">{selectedProject}</option>
-                  {projects.map((project, index) => (
-                    <option key={index} value={project.id}>
-                      {project.projectName}
-                    </option>
-                  ))}
-                </select>
+                <Select className='selectDropdown' options={formattedProjects} onChange={(option) => { const selected = projects.find(p => p.id === option.value); handleSelect(selected); }} placeholder="Select a project"/>
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
-                <label htmlFor="">Select Sub Page</label>
-                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {selectedUrl ? selectedUrl : "Select Sub Page"}
-                </a>
-                <ul className="dropdown-menu">
-                  {urls.length > 0 ? (
-                    urls.map((url, index) => (
-                      <li 
-                        className="dropdown-item" 
-                        key={index} 
-                        onClick={() => {
-                          setSelectedUrl(url);
-                        }}
-                      >
-                        {url}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="dropdown-item">No Pages Found</li>
-                  )}
-                </ul>
+                <label htmlFor="">Select Sub Page</label>                
+                <Select className='selectDropdown' options={urls.map(url => ({ value: url, label: url }))} onChange={(option) => setSelectedUrl(option.value)} placeholder="Select a page URL" />
               </div>
               <div className="dropdown d-flex flex-column col-lg-4">
                 <div className='d-flex justify-content-between'>
                   <label htmlFor="">Select Anchor Text</label>
                   <FaCircleXmark onClick={() => removeRow(row.id)} className='cross d-none d-lg-block' />
                 </div>
-                <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{selectedTag ? selectedTag : "Select Anchor Text"}</a>
-                <ul className="dropdown-menu">
-                  {anchorTags.length > 0 ? (
-                    anchorTags.map((tag, index) => (
-                      <li className="dropdown-item" key={index} onClick={() => setSelectedTag(tag)}>{tag}</li>
-                    ))
-                  ) : (
-                    <li className="dropdown-item">No Tags Found</li>
-                  )}
-                </ul>
+                <Select className='selectDropdown' options={Array.isArray(anchorTags) ? anchorTags.map(tag => ({ value: tag, label: tag })) : []} onChange={(option) => setSelectedTag(option.value)} placeholder="Select an anchor tag" />
               </div>
             </div>
           ))}
@@ -367,70 +264,47 @@ function AddBacklink() {
             </div>
             <div className="inputs d-flex flex-column col-12 mt-2">
               <label htmlFor="">Live Link</label>
-              <input type="text" onChange={(e) => setLiveLink(e.target.value)} placeholder='Enter Live link' className='form-control' name="" id="" />
+              <input type="text" onChange={(e) => setLiveLink(e.target.value)} placeholder='Enter Live link' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-1">
               <label htmlFor="">Domain Traffic</label>
-              <input type="text" onChange={(e) => setDomainTraffic(e.target.value)} placeholder='Enter Domain Traffic' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setDomainTraffic(e.target.value)} placeholder='Enter Domain Traffic' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-1">
               <label htmlFor="">US Traffic</label>
-              <input type="text" onChange={(e) => setUSTraffic(e.target.value)} placeholder='Enter US Traffic' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setUSTraffic(e.target.value)} placeholder='Enter US Traffic' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-2">
               <label htmlFor="">DR</label>
-              <input type="text" onChange={(e) => setDomainRating(e.target.value)} placeholder='Enter Domain Rating' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setDomainRating(e.target.value)} placeholder='Enter Domain Rating' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-2">
               <label htmlFor="">DA</label>
-              <input type="text" onChange={(e) => setDomainAuthority(e.target.value)} placeholder='Enter Domain Authority' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setDomainAuthority(e.target.value)} placeholder='Enter Domain Authority' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-2">
               <label htmlFor="">Total Pages</label>
-              <input type="text" onChange={(e) => setTotalPages(e.target.value)} placeholder='Enter total pages' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setTotalPages(e.target.value)} placeholder='Enter total pages' className='form-control' required />
             </div>
             <div className="dropdown d-flex flex-column col-6 mt-2">
               <label>Out Reacher</label>
-              <select id="out-reacher" className="form-select js-example-basic-single">
-                <option value="">Select Out Reacher</option>
-                {outReachers.map((member, index) => (
-                  <option key={index} value={member.id}>
-                    {member.memberName}
-                  </option>
-                ))}
-              </select>
+              <Select className="selectDropdown" options={outReachers.map(member => ({ value: member.id, label: member.memberName }))} onChange={(option) => setOutReacherName(option)} placeholder="Select Out Reacher" />
             </div>
-
             <div className="dropdown d-flex flex-column col-6 mt-1">
               <label>Approved By</label>
-              <select id="approver" className="form-select js-example-basic-single">
-                <option value="">Select Approved By</option>
-                {ApproverName.map((member, index) => (
-                  <option key={index} value={member.id}>
-                    {member.memberName}
-                  </option>
-                ))}
-              </select>
+              <Select className="selectDropdown" id="approver" options={ApproverName.map(member => ({ value: member.id, label: member.memberName }))} value={ApproverTeamName} onChange={(option) => setapproverTeamName(option)} placeholder="Select Approved By" />
             </div>
-
             <div className="dropdown d-flex flex-column col-6 mt-1">
               <label>Content Writer</label>
-              <select id="content-writer" className="form-select js-example-basic-single">
-                <option value="">Select Content Writer</option>
-                {contentWriters.map((member, index) => (
-                  <option key={index} value={member.id}>
-                    {member.memberName}
-                  </option>
-                ))}
-              </select>
+              <Select className="selectDropdown" id="content-writer" options={contentWriters.map(member => ({ value: member.id, label: member.memberName }))} value={ContentWriterName} onChange={(option) => setContentWriterName(option)} placeholder="Select Content Writer" />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-3">
               <label htmlFor="">Page Traffic</label>
-              <input type="text" onChange={(e) => setPageTraffic(e.target.value)} placeholder='Enter Page Traffic' className='form-control' name="" id="" />
+              <input type="number" onChange={(e) => setPageTraffic(e.target.value)} placeholder='Enter Page Traffic' className='form-control' required />
             </div>
             <div className="inputs d-flex flex-column col-6 mt-3">
               <label htmlFor="">Content Link</label>
-              <input type="text" onChange={(e) => setContentLink(e.target.value)} placeholder='Content Link' className='form-control' name="" id="" />
+              <input type="text" onChange={(e) => setContentLink(e.target.value)} placeholder='Content Link' className='form-control' required />
             </div>
             <div className="dropdown d-flex flex-column col-6 mt-2">
               <label htmlFor="">Backlink Cost</label>
@@ -440,9 +314,13 @@ function AddBacklink() {
                 <li className="dropdown-item" onClick={() => handleBackLinkTypeChange("Paid")}>Paid</li>
               </ul>
             </div>
-            <div className="inputs d-flex flex-column col-6 mt-2">
+            <div className="dropdown d-flex flex-column col-6 mt-2">
               <label htmlFor="">Price</label>
-              <input type="text" value={Price} onChange={(e) => setPrice(e.target.value)} placeholder='Enter Price' className='form-control' name="" id="" disabled={backLinkType === "Free"} />
+              <input type="number" value={Price} onChange={(e) => setPrice(e.target.value)} placeholder='Enter Price' className='form-control' required disabled={backLinkType === "Free"} />
+            </div>
+            <div className="dropdown d-flex flex-column col-6 mt-2">
+              <label htmlFor="">Language</label>
+              <Select className="selectDropdown" id="languageSelect" options={languages.map(lang => ({ value: lang.code, label: lang.name }))} value={selectedLang} onChange={(option) => setSelectedLang(option)} placeholder="Select Language" menuPlacement="auto"  />
             </div>
           </div>
           <div className='text-center mt-3'>

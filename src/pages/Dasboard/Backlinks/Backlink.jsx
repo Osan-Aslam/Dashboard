@@ -17,6 +17,13 @@ function Backlink() {
   const [filteredBacklinks, setFilteredBacklinks] = useState([]);
   const [filters, setFilters] = useState({});
   const [selectedSort, setSelectedSort] = useState('Low to high price');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+
 
   useEffect(() => {
     const fetchBacklinks = async () => {
@@ -65,6 +72,12 @@ function Backlink() {
     }
   }, [selectedSort, filteredBacklinks]);
 
+  const currentItems = useMemo(() => {
+    return sortedBacklinks.slice(indexOfFirstItem, indexOfLastItem);
+  }, [sortedBacklinks, indexOfFirstItem, indexOfLastItem]);
+
+  const totalPages = Math.ceil(filteredBacklinks.length / itemsPerPage);
+
   const copyToClipboard = (email) => {
     navigator.clipboard.writeText(email)
       .then(() => {
@@ -86,6 +99,17 @@ function Backlink() {
     // ... (your existing filter logic; it already guards undefined fields by using optional chaining)
 
     setFilteredBacklinks(filtered);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleItemsPerPageChange = (count) => {
+    setItemsPerPage(count);
+    setCurrentPage(1);  // Reset to the first page when items per page changes
   };
 
   return (
@@ -135,90 +159,68 @@ function Backlink() {
             </tr>
           </thead>
           <tbody className='backlinks'>
-            {sortedBacklinks.length > 0 ? (
-              sortedBacklinks.map((b, idx) => (
-                <tr key={idx}>
-                  <td className='d-flex flex-column'>
-                    {b.project?.projectURL
-                      ? <a className='projectlink' target='_blank' rel="noopener noreferrer" href={b.project.projectURL}>{b.project.projectURL}</a>
-                      : <span>N/A</span>}
-                    <a className="sublink" href="#">
-                      {b.subPage && b.project?.projectURL
-                        ? "/" + b.subPage.replace(b.project.projectURL, '')
-                        : 'N/A'}
-                    </a>
-                    <div className='mt-1'>
-                      <Badge>{b.anchorTag ?? 'N/A'}</Badge>
-                    </div>
-                  </td>
-
-                  <td>
-                    {b.dealLink
-                      ? <a className='sublink' href="#">{b.dealLink}</a>
-                      : <span>N/A</span>}
-                    <div className='mt-1'>
-                      <Badge>{`DA: ${b.domainAuthority != null ? b.domainAuthority : 'N/A'}`}</Badge>
-                      <Badge>{`DR: ${b.domainRating != null ? b.domainRating : 'N/A'}`}</Badge>
-                      <Badge>{`Total Pages: ${formatNumber(b.totalPages)}`}</Badge>
-                      <Badge>{`Domain Traffic: ${formatNumber(b.domainTraffic)}`}</Badge>
-                      <Badge>{`US Traffic: ${formatNumber(b.usTraffic)}`}</Badge>
-                    </div>
-                  </td>
-
-                  <td>
-                    {b.liveLink
-                      ? <a className='livelink breaklink link-container' href="#">{b.liveLink}</a>
-                      : <span>N/A</span>}
-                    <div className='mt-1'>
-                      <Badge>{`Page Traffic: ${formatNumber(b.pageTraffic)}`}</Badge>
-                      <Badge>{`First Seen: ${b.firstSeen ?? 'N/A'}`}</Badge>
-                      <Badge>{`Last Seen: ${b.lastSeen ?? 'N/A'}`}</Badge>
-                      <Badge className='lostdate'>{`Lost Date: ${b.lostDate ?? 'N/A'}`}</Badge>
-                    </div>
-                  </td>
-
-                  <td>
-                    <Badge>{b.linkType ?? 'N/A'}</Badge>
-                  </td>
-
-                  <td>
-                    <p>{b.outReacher?.memberName ?? 'N/A'}</p>
-                    {b.outReacher?.email
-                      ? (
-                        <span className='breaklink outReacherEmail'>
-                          {b.outReacher.email}
-                          <MdOutlineContentCopy onClick={() => copyToClipboard(b.outReacher.email)} />
-                        </span>
-                      )
-                      : <span>N/A</span>}
-                  </td>
-
-                  <td>
-                    <span>{b.approver?.memberName ?? 'N/A'}</span>
-                  </td>
-
-                  <td>
-                    <p>{b.contentWriter?.memberName ?? 'N/A'}</p>
-                    {b.contentLink
-                      ? <a target='_blank' rel="noopener noreferrer" href={b.contentLink}>Article Link <FaExternalLinkAlt /></a>
-                      : <span>N/A</span>}
-                  </td>
-
-                  <td>
-                    <p>{b.dealType ?? 'N/A'}</p>
-                  </td>
-
-                  <td>{b.price != null ? `$${formatNumber(b.price)}` : 'N/A'}</td>
-
-                  <td className='d-flex'>
-                    {b.id
-                      ? (
-                        <>
-                          <Link to={`/backlink/viewbacklink/${b.id}`} className='btn dashboard-btn'><FaEye /> View</Link>
-                          <Link to={`/backlink/updatebacklink/${b.id}`} className='btn dashboard-btn'><MdEdit /> Edit</Link>
-                        </>
-                      )
-                      : <span>N/A</span>}
+            {
+              sortedBacklinks.length > 0 ? (
+                currentItems.map((backlink, index) => (
+                  <tr key={index}>
+                    <td className='d-flex flex-column'>
+                      <a className='projectlink' target='_blank' href={backlink.project.projectURL}>{backlink.project.projectURL}</a>
+                      <a className="sublink" href="#">
+                        {"/" + backlink.subPage.replace(backlink.project.projectURL, '')}
+                      </a>
+                      <a className='projectlink' target='_blank' href={backlink.project?.projectURL}>{backlink.project?.projectURL}</a>
+                      <a className='sublink' href="#">{backlink.project?.projectName}</a>
+                      <div className='mt-1'>
+                        <span><Badge>{backlink.anchorTag}</Badge></span>
+                      </div>
+                    </td>
+                    <td>
+                      <a className='sublink' href="#">{backlink.dealLink}</a>
+                      <div className='mt-1'>
+                        <span><Badge>{`DA: ${backlink.domainAuthority}`}</Badge></span>
+                        <span><Badge>{`DR: ${backlink.domainRating}`}</Badge></span>
+                        <span><Badge>{`Total Pages: ${formatNumber(backlink.totalPages)}`}</Badge></span>
+                        <span><Badge>{`Domain Traffic: ${formatNumber(backlink.domainTraffic)}`}</Badge></span>
+                        <span><Badge>{`US Traffic: ${formatNumber(backlink.usTraffic)}`}</Badge></span>
+                      </div>
+                    </td>
+                    <td>
+                      <a className='livelink breaklink link-container' href="#">{backlink.liveLink}</a>
+                      <div className='mt-1'>
+                        <span><Badge>{`Page Traffic: ${formatNumber(backlink.pageTraffic)}`}</Badge></span>
+                        <span><Badge>{`First Seen: ${backlink.firstSeen}`}</Badge></span>
+                        <span><Badge>{`Last Seen: ${backlink.lastSeen}`}</Badge></span>
+                        <span><Badge className='lostdate'>{`Lost Date: ${backlink.lostDate}`}</Badge></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span><Badge>{backlink.linkType}</Badge></span>
+                    </td>
+                    <td>
+                      <p>{backlink.outReacher?.memberName}</p>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher?.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
+                    </td>
+                    <td>
+                      <span>{backlink.approver?.memberName}</span>
+                    </td>
+                    <td>
+                      <p>{backlink.contentWriter?.memberName}</p>
+                      <a target='_blank' href={backlink.contentLink}>Article Link <FaExternalLinkAlt /></a>
+                    </td>
+                    <td>
+                      <p>{backlink.dealType}</p>
+                    </td>
+                    <td>{`${formatNumber(backlink.price)}`}</td>
+                    <td className='d-flex'>
+                      <Link to={`/backlink/viewbacklink/${backlink.id}`} className='btn dashboard-btn'><FaEye /> View</Link>
+                      <Link to={`/backlink/updatebacklink/${backlink.id}`} className='btn dashboard-btn'><MdEdit /> Edit</Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" className='text-center'>
+                    <h5>No Backlinks Found</h5>
                   </td>
                 </tr>
               ))
@@ -235,21 +237,47 @@ function Backlink() {
         <div className='d-flex align-items-center justify-content-between'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">
-              <li className="page-item"><a className="page-link" href="#"><IoIosArrowBack /> Prev</a></li>
-              <li className="page-item"><a className="page-link active" href="#">1</a></li>
-              <li className="page-item"><a className="page-link" href="#">2</a></li>
-              <li className="page-item"><a className="page-link" href="#">3</a></li>
-              <li className="page-item"><a className="page-link" href="#">Next <IoIosArrowForward /></a></li>
+              {/* Prev Button */}
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+                  <IoIosArrowBack /> Prev
+                </button>
+              </li>
+
+              {/* Show page numbers (1, 2, 3 only) */}
+              {[1, 2, 3].map((pageNum) => (
+                pageNum <= totalPages && (
+                  <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(pageNum)}>
+                      {pageNum}
+                    </button>
+                  </li>
+                )
+              ))}
+
+              {/* Show "..." if more pages exist */}
+              {totalPages > 3 && <li className="page-item disabled"><span className="page-link">...</span></li>}
+
+              {/* Next Button */}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                  Next <IoIosArrowForward />
+                </button>
+              </li>
             </ul>
           </nav>
           <div className='d-flex align-items-center viewTime'>
             <span>Show:</span>
             <div className="dropdown">
-              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">10 Per Page</button>
+              <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                {itemsPerPage} Per Page
+              </button>
               <ul className="dropdown-menu dropdown-menu-dark">
-                <li className="dropdown-item">20 Per Page</li>
-                <li className="dropdown-item">30 Per Page</li>
-                <li className="dropdown-item">40 Per Page</li>
+                {[10, 20, 30, 40].map((count) => (
+                  <li key={count} className="dropdown-item" onClick={() => handleItemsPerPageChange(count)}>
+                    {count} Per Page
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

@@ -1,7 +1,6 @@
 import { useState } from "react" ;
 import logo from "../../assets/icon/main-logo.svg";
 import {Link, useNavigate} from 'react-router-dom'
-import Signup from "../signUp/SignUp";
 import $, { event } from "jquery";
 import axios from "axios";
 import Alert from 'react-bootstrap/Alert';
@@ -70,7 +69,6 @@ function SignIn() {
               </div>
               <button className="btn signin-btn" onClick={handleLogin}>Sign In</button>
           </form>
-          <p>Don't have account? <Link to="/signup">Signup</Link></p>
       </div>
     </>
   )

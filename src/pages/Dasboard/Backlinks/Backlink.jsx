@@ -183,6 +183,35 @@ function Backlink() {
           (!filterValues.mozDrMax || dr <= parseFloat(filterValues.mozDrMax));
       });
     }
+    if (filterValues.durationFilter) {
+      const now = new Date();
+      let fromDate;
+    
+      switch (filterValues.durationFilter) {
+        case "Last 24 hours":
+          fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case "Last 7 days":
+          fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "Last 30 days":
+          fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case "Last 3 month":
+          fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          fromDate = null;
+      }
+    
+      if (fromDate) {
+        filtered = filtered.filter(b => {
+          const createdAt = new Date(b.createdAt);
+          return createdAt >= fromDate;
+        });
+      }
+    }
+    
     console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };

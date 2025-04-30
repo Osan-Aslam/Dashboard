@@ -36,6 +36,7 @@ function BacklinkFilter({ onApplyFilters }) {
   const [mozDrMax, setMozDrMax] = useState("");
   const [mozDaMin, setMozDaMin] = useState("");
   const [mozDaMax, setMozDaMax] = useState("");
+  const [durationFilter, setDurationFilter] = useState("Last 24 hours");
 
   const handleSelect = (project) => {
     if (project) {
@@ -155,6 +156,7 @@ function BacklinkFilter({ onApplyFilters }) {
       mozDrMin,
       mozDrMax,
       backlinkType,
+      durationFilter,
     };
     console.log(filterValues);
     onApplyFilters(filterValues); // Call parent function
@@ -179,11 +181,15 @@ function BacklinkFilter({ onApplyFilters }) {
                     <label htmlFor="">View By Duration</label>
                     <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Last 24 hours</a>
                     <ul className="dropdown-menu">
-                      <li className="dropdown-item">Last 24 hours</li>
-                      <li className="dropdown-item">Last 7 days</li>
-                      <li className="dropdown-item">Last 30 days</li>
-                      <li className="dropdown-item">Last 3 month</li>
-                      <li className="dropdown-item">Custom Duration</li>
+                      {["Last 24 hours", "Last 7 days", "Last 30 days", "Last 3 month", "Custom Duration"].map(option => (
+                        <li
+                          key={option}
+                          className="dropdown-item"
+                          onClick={() => setDurationFilter(option)}
+                        >
+                          {option}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">

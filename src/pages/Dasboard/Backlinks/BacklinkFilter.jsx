@@ -179,14 +179,10 @@ function BacklinkFilter({ onApplyFilters }) {
                 <div className='row mb-3'>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">View By Duration</label>
-                    <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Last 24 hours</a>
+                    <button className="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"> {durationFilter} </button>
                     <ul className="dropdown-menu">
                       {["Last 24 hours", "Last 7 days", "Last 30 days", "Last 3 month", "Custom Duration"].map(option => (
-                        <li
-                          key={option}
-                          className="dropdown-item"
-                          onClick={() => setDurationFilter(option)}
-                        >
+                        <li key={option} className="dropdown-item" onClick={() => setDurationFilter(option)}>
                           {option}
                         </li>
                       ))}

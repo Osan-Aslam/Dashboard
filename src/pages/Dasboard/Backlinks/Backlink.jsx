@@ -98,6 +98,117 @@ function Backlink() {
 
     // ... (your existing filter logic; it already guards undefined fields by using optional chaining)
 
+    if (filterValues.linkType) {
+      filtered = filtered.filter(b => b.linkType === filterValues.linkType);
+    }
+
+    if (filterValues.projectName) {
+      filtered = filtered.filter(b => b.project?.projectName?.toLowerCase() === filterValues.projectName.toLowerCase());
+    }
+
+    if (filterValues.selectedUrl) {
+      filtered = filtered.filter(b => b.pageUrl === filterValues.selectedUrl);
+    }
+
+    if (filterValues.selectedTag) {
+      filtered = filtered.filter(b => (b.anchorTags || "").split(',').map(t => t.trim()).includes(filterValues.selectedTag));
+    }
+
+    if (filterValues.OutReacherName) {
+      filtered = filtered.filter((link) => link.outReacher?.id === filterValues.OutReacherName
+      );
+    }
+
+    if (filterValues.selectedLang && filterValues.selectedLang !== "SelectLanguage") {
+      filtered = filtered.filter(b => b.language === filterValues.selectedLang);
+    }
+
+    if (filterValues.selectedTld && filterValues.selectedTld !== "TLD") {
+      filtered = filtered.filter(b => {
+        try {
+          const url = new URL(b.dealLink);
+          const hostnameParts = url.hostname.split('.');
+          const tld = hostnameParts[hostnameParts.length - 1];
+          return tld === filterValues.selectedTld.toLowerCase();
+        } catch (e) {
+          return false;
+        }
+      });
+    }
+
+    if (filterValues.backlinkType === "Free") {
+      filtered = filtered.filter(b => parseFloat(b.price || 0) === 0);
+    } else {
+      if (filterValues.minPrice || filterValues.maxPrice) {
+        filtered = filtered.filter(b => {
+          const price = parseFloat(b.price || 0);
+          return (!filterValues.minPrice || price >= parseFloat(filterValues.minPrice)) &&
+            (!filterValues.maxPrice || price <= parseFloat(filterValues.maxPrice));
+        });
+      }
+    }
+
+    if (filterValues.domainTrafficMin || filterValues.domainTrafficMax) {
+      filtered = filtered.filter(b => {
+        const traffic = parseFloat(b.domainTraffic || 0);
+        return (!filterValues.domainTrafficMin || traffic >= parseFloat(filterValues.domainTrafficMin)) &&
+          (!filterValues.domainTrafficMax || traffic <= parseFloat(filterValues.domainTrafficMax));
+      });
+    }
+
+    if (filterValues.usTrafficMin || filterValues.usTrafficMax) {
+      filtered = filtered.filter(b => {
+        const traffic = parseFloat(b.usTraffic || 0);
+        return (!filterValues.usTrafficMin || traffic >= parseFloat(filterValues.usTrafficMin)) &&
+          (!filterValues.usTrafficMax || traffic <= parseFloat(filterValues.usTrafficMax));
+      });
+    }
+
+    if (filterValues.mozDaMin || filterValues.mozDaMax) {
+      filtered = filtered.filter(b => {
+        const da = parseFloat(b.domainAuthority || 0); // Updated here
+        return (!filterValues.mozDaMin || da >= parseFloat(filterValues.mozDaMin)) &&
+          (!filterValues.mozDaMax || da <= parseFloat(filterValues.mozDaMax));
+      });
+    }
+
+    if (filterValues.mozDrMin || filterValues.mozDrMax) {
+      filtered = filtered.filter(b => {
+        const dr = parseFloat(b.domainRating || 0); // Adjust based on actual API field name
+        return (!filterValues.mozDrMin || dr >= parseFloat(filterValues.mozDrMin)) &&
+          (!filterValues.mozDrMax || dr <= parseFloat(filterValues.mozDrMax));
+      });
+    }
+    if (filterValues.durationFilter) {
+      const now = new Date();
+      let fromDate;
+    
+      switch (filterValues.durationFilter) {
+        case "Last 24 hours":
+          fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case "Last 7 days":
+          fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "Last 30 days":
+          fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case "Last 3 month":
+          fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          fromDate = null;
+      }
+    
+      if (fromDate) {
+        filtered = filtered.filter(b => {
+          const createdAt = new Date(b.createdAt);
+          return createdAt >= fromDate;
+        });
+      }
+    }
+    
+    console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };
 

@@ -2,8 +2,6 @@ import React, { use, useEffect, useRef, useState } from 'react'
 import { FaPlus } from "react-icons/fa6";
 import { FaCircleXmark } from "react-icons/fa6";
 import axios from 'axios';
-import 'select2';
-import 'select2/dist/css/select2.min.css';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select'
 

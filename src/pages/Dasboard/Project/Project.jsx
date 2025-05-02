@@ -42,6 +42,7 @@ function Project() {
       }
     }).then(response => {
       setProjects(response.data);
+      console.log("projects: ", response.data);
     }).catch(error => {
       console.error("Error fetching Projects:", error);
     });

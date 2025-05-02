@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { BsFilterLeft } from "react-icons/bs";
-import $ from "jquery";
 import axios from 'axios';
-import 'select2';
 import Select from 'react-select'
 
 function BacklinkFilter({ onApplyFilters }) {
@@ -36,7 +34,7 @@ function BacklinkFilter({ onApplyFilters }) {
   const [mozDrMax, setMozDrMax] = useState("");
   const [mozDaMin, setMozDaMin] = useState("");
   const [mozDaMax, setMozDaMax] = useState("");
-  const [durationFilter, setDurationFilter] = useState("Last 24 hours");
+  const [durationFilter, setDurationFilter] = useState("All");
 
   const handleSelect = (project) => {
     if (project) {
@@ -181,7 +179,7 @@ function BacklinkFilter({ onApplyFilters }) {
                     <label htmlFor="">View By Duration</label>
                     <button className="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"> {durationFilter} </button>
                     <ul className="dropdown-menu">
-                      {["Last 24 hours", "Last 7 days", "Last 30 days", "Last 3 month", "Custom Duration"].map(option => (
+                      {["All", "Last 24 hours", "Last 7 days", "Last 30 days", "Last 3 month", "Custom Duration"].map(option => (
                         <li key={option} className="dropdown-item" onClick={() => setDurationFilter(option)}>
                           {option}
                         </li>

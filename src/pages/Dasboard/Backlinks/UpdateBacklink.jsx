@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FaCircleXmark, FaPlus } from 'react-icons/fa6';
-import $, { event } from "jquery";
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select'
 
@@ -123,7 +122,7 @@ function UpdateBacklink() {
 					"Content-Type": "multipart/form-data"
 				}
 			});
-			console.log("Response: ", response);
+			console.log("Response: ", response.data);
 			navigate("/backlink");
 		} catch (error) {
 			console.error("Error: ", error);

@@ -179,7 +179,8 @@ function Backlink() {
           (!filterValues.mozDrMax || dr <= parseFloat(filterValues.mozDrMax));
       });
     }
-    if (filterValues.durationFilter) {
+
+    if (filterValues.durationFilter && filterValues.durationFilter !== "All") {
       const now = new Date();
       let fromDate;
     
@@ -283,7 +284,7 @@ function Backlink() {
                       </div>
                     </td>
                     <td>
-                      <a className='sublink' href="#">{backlink.dealLink}</a>
+                      <a className='sublink' target='_blank' href={backlink.dealLink}>{backlink.dealLink}</a>
                       <div className='mt-1'>
                         <span><Badge>{`DA: ${backlink.domainAuthority}`}</Badge></span>
                         <span><Badge>{`DR: ${backlink.domainRating}`}</Badge></span>
@@ -293,7 +294,7 @@ function Backlink() {
                       </div>
                     </td>
                     <td>
-                      <a className='livelink breaklink link-container' href="#">{backlink.liveLink}</a>
+                      <a className='livelink breaklink link-container' target='_blank' href={backlink.liveLink}>{backlink.liveLink}</a>
                       <div className='mt-1'>
                         <span><Badge>{`Page Traffic: ${formatNumber(backlink.pageTraffic)}`}</Badge></span>
                         <span><Badge>{`First Seen: ${backlink.firstSeen}`}</Badge></span>
@@ -306,7 +307,7 @@ function Backlink() {
                     </td>
                     <td>
                       <p>{backlink.outReacher?.memberName}</p>
-                      <span className='breaklink outReacherEmail'>{backlink.outReacher?.email} <MdOutlineContentCopy onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
+                      <span className='breaklink outReacherEmail'>{backlink.outReacher?.email} <MdOutlineContentCopy className='copyEmail' onClick={() => copyToClipboard(backlink.outReacher.email)} /></span>
                     </td>
                     <td>
                       <span>{backlink.approver?.memberName}</span>

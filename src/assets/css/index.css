@@ -684,6 +684,10 @@ form .signin-btn:hover {
 .pagination .active>.page-link, .page-link.active{
   color: #000;
 }
+
+.copyEmail{
+  cursor: pointer;
+}
 @media screen and (max-width: 992px) {
   .tab-pane .dashboard {
     display: grid;

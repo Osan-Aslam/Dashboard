@@ -141,7 +141,7 @@ function BacklinkFilter({ onApplyFilters }) {
       selectedUrl,
       selectedTag,
       OutReacherName,
-      selectedLang,
+      selectedLang: selectedLang?.value || "",
       selectedTld,
       priceMin,
       priceMax,

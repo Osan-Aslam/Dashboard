@@ -6,17 +6,14 @@ import { FaEye } from "react-icons/fa";
 import { HiPencil } from "react-icons/hi2";
 import { FaRegEnvelope } from "react-icons/fa";
 import TeamImage from "../../../assets/image/Teamimage.png";
-import AddNewTeam from './AddMember';
-import ViewMember from './ViewMember';
+import exitUser from "../../../assets/icon/user_exit.svg"
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { error } from 'jquery';
-import $, { event } from "jquery";
+import $ from "jquery";
+import { memo } from 'react';
 
 const Team = () => {
   const [members, setMembers] = useState([]);
@@ -24,6 +21,9 @@ const Team = () => {
   const [selectedDesignation, setSelectedDesignation] = useState("All Members");
   const [show, setShow] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState(null);
+  const [reason, setReason] = useState("");
+  const [memberToLeave, setMemberToLeave] = useState(null);
+  const [shows, setShows] = useState(false);
 
   const hendleDelete = async (id) => {
     // Set the member to delete
@@ -121,6 +121,47 @@ const Team = () => {
     setSelectedDesignation(designation)
   }
 
+  const handleLeave = async () => {
+    if (!memberToLeave) return;
+  
+    const formData = new FormData();
+    formData.append("MemberName", memberToLeave.memberName);
+    formData.append("Designation", memberToLeave.designation);
+    formData.append("JoiningDate", memberToLeave.joiningDate); // ISO format
+    formData.append("BasicSalary", memberToLeave.basicSalary);
+    formData.append("Email", memberToLeave.email);
+    formData.append("ReasonForBeingInactive", reason);
+    formData.append("profilePicture", ""); // or memberToLeave.profilePicture if used
+  
+    try {
+      await axios.patch(
+        `http://207.180.203.98:5030/api/team-members/${memberToLeave.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Accept": "*/*"
+          }
+        }
+      );
+  
+      // Update the member in the state
+      setMembers(prev =>
+        prev.map(m =>
+          m.id === memberToLeave.id ? { ...m, reasonForBeingInactive: reason } : m
+        )
+      );
+  
+      setShows(false);
+      setReason("");
+      setMemberToLeave(null);
+    } catch (error) {
+      console.error("Error updating leave reason:", error);
+      alert("Failed to update leave status.");
+    }
+  };
+  const handleClose = () => setShow(false);
+
   return (
     <div>
       <div className='d-flex justify-content-between p-3'>
@@ -155,7 +196,7 @@ const Team = () => {
         ) : (
           filterMember.map((member) => (
             <div className="col-lg-4" key={member.id}>
-              <div className="card mb-3">
+              <div className={`card mb-3 ${member.reasonForBeingInactive ? 'left-member-card' : ''}`}>
                 <div className="row g-0 align-items-center">
                   <>
                     <div className="col-md-4 text-center">
@@ -165,6 +206,9 @@ const Team = () => {
                       <div className="card-body text-lg-start text-center">
                         <h5 className="card-title mb-1">{member.memberName}</h5>
                         <p className="card-text mb-1">{member.designation}</p>
+                        {/* {member.reasonForBeingInactive && (
+                          <p className="text-danger small">Left: {member.reasonForBeingInactive}</p>
+                        )} */}
                         <div>
                           <Link to={`/team/viewMember/${member.id}`}>
                             <FaEye className='icon' />
@@ -174,6 +218,10 @@ const Team = () => {
                           </Link>
                           <FaRegEnvelope className='icon' onClick={() => copyToClipboard(member.email)} />
                           <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
+                          <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => {
+                            setShows(true);
+                            setMemberToLeave(member); // set the current member for leaving
+                          }} />
                         </div>
                       </div>
                     </div>
@@ -195,6 +243,23 @@ const Team = () => {
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDeleteCancel}>Close</Button>
           <Button variant="primary" onClick={handleDeleteConfirm}>Delete</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={shows} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Leaving Confirm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input type="text" className='form-control' value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason for leaving" id="" />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleLeave}>
+            Leave
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

@@ -66,6 +66,8 @@ const Team = () => {
         const response = await axios.get("http://207.180.203.98:5030/api/team-members");
         const fetchMembers = response.data;
 
+        console.log("response data members: ", response.data);
+
         const memberWithImages = await Promise.all(
           fetchMembers.map(async (member) => {
             const profilePictureUrl = await fetchProfilePicture(member.profilePictureUrl);
@@ -83,18 +85,35 @@ const Team = () => {
   }, []);
 
   const copyToClipboard = (email) => {
-    navigator.clipboard.writeText(email)
-      .then(() => {
-        $(".email-copied").removeClass("d-none");
-        $(".email-copied").text(`Copied: ${email}`);
-        setTimeout(() => {
-          $(".email-copied").addClass("d-none");
-        }, 3000);
-      })
-      .catch(error => {
-        console.error(`Could not copy emial: `, error);
-      });
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email)
+        .then(() => {
+          $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
+          setTimeout(() => $(".email-copied").addClass("d-none"), 3000);
+        })
+        .catch(error => {
+          console.error("Clipboard error:", error);
+        });
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = email;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+  
+      try {
+        document.execCommand('copy');
+        $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
+        setTimeout(() => $(".email-copied").addClass("d-none"), 3000);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+  
+      document.body.removeChild(textArea);
+    }
   };
+  
 
   const fetchProfilePicture = async (profilePath) => {
     if (!profilePath) return TeamImage;
@@ -130,26 +149,24 @@ const Team = () => {
     formData.append("JoiningDate", memberToLeave.joiningDate); // ISO format
     formData.append("BasicSalary", memberToLeave.basicSalary);
     formData.append("Email", memberToLeave.email);
-    formData.append("ReasonForBeingInactive", reason);
+    formData.append("reasonForBeingInactive", reason);
     formData.append("profilePicture", ""); // or memberToLeave.profilePicture if used
-  
+    console.log("sending Data :", Object.fromEntries(formData.entries()));
     try {
-      await axios.patch(
+      const response =  await axios.patch(
         `http://207.180.203.98:5030/api/team-members/${memberToLeave.id}`,
         formData,
         {
           headers: {
+            "Accept": "*/*",
             "Content-Type": "multipart/form-data",
-            "Accept": "*/*"
           }
         }
       );
-  
+      console.log(response.data);
       // Update the member in the state
       setMembers(prev =>
-        prev.map(m =>
-          m.id === memberToLeave.id ? { ...m, reasonForBeingInactive: reason } : m
-        )
+        prev.map(m => m.id === memberToLeave.id ? { ...m, reasonForBeingInactive: reason } : m)
       );
   
       setShows(false);
@@ -160,7 +177,7 @@ const Team = () => {
       alert("Failed to update leave status.");
     }
   };
-  const handleClose = () => setShow(false);
+  const handleClose = () => setShows(false);
 
   return (
     <div>

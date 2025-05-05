@@ -80,17 +80,33 @@ function Backlink() {
   const totalPages = Math.ceil(filteredBacklinks.length / itemsPerPage);
 
   const copyToClipboard = (email) => {
-    navigator.clipboard.writeText(email)
-      .then(() => {
-        $(".email-copied").removeClass("d-none");
-        $(".email-copied").text(`Copied: ${email}`);
-        setTimeout(() => {
-          $(".email-copied").addClass("d-none");
-        }, 3000);
-      })
-      .catch(error => {
-        console.error(`Could not copy emial: `, error);
-      });
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email)
+        .then(() => {
+          $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
+          setTimeout(() => $(".email-copied").addClass("d-none"), 3000);
+        })
+        .catch(error => {
+          console.error("Clipboard error:", error);
+        });
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = email;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+  
+      try {
+        document.execCommand('copy');
+        $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
+        setTimeout(() => $(".email-copied").addClass("d-none"), 3000);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+  
+      document.body.removeChild(textArea);
+    }
   };
 
   const applyFilters = (filterValues) => {

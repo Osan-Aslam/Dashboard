@@ -414,7 +414,8 @@ form .signin-btn:hover {
   cursor: pointer;
 }
 
-.card .icon.delete-icon, .delete-project{
+.card .icon.delete-icon,
+.delete-project {
   background-color: #FF4A4A !important;
 }
 
@@ -539,6 +540,7 @@ form .signin-btn:hover {
 .backlinks .outReacherEmail {
   color: #005CCC;
 }
+
 .table tr {
   background-color: #fff;
   border-bottom: 1px solid #CBD1DC;
@@ -639,30 +641,30 @@ form .signin-btn:hover {
   color: #919AAA;
 }
 
-.card .card-body span{
+.card .card-body span {
   color: #000;
 }
 
-.breadcrumb-item a{
+.breadcrumb-item a {
   text-decoration: none;
   color: #000;
 }
 
-.dropdown .selectDropdown{
+.dropdown .selectDropdown {
   font-size: 12px;
   font-weight: 500;
 }
 
-.dropdown .css-1u9des2-indicatorSeparator{
+.dropdown .css-1u9des2-indicatorSeparator {
   background-color: transparent;
 }
 
-.dropdown .css-tj5bde-Svg{
+.dropdown .css-tj5bde-Svg {
   width: 14px;
   stroke-width: 0.5px;
 }
 
-.dropdown .css-hlgwow{
+.dropdown .css-hlgwow {
   padding: 2px 6px;
 }
 
@@ -675,18 +677,34 @@ form .signin-btn:hover {
   word-break: break-word;
 }
 
-.alert.email-copied{
+.alert.email-copied {
   position: fixed;
   right: 20px;
   top: 50px;
 }
 
-.pagination .active>.page-link, .page-link.active{
+.pagination .active>.page-link,
+.page-link.active {
   color: #000;
 }
 
-.copyEmail{
+.copyEmail {
   cursor: pointer;
+}
+
+.card-body .exitUser {
+  width: 27px;
+  height: 27px;
+  border-radius: 5px;
+  background-color: #FF5252;
+  padding: 5px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.left-member-card {
+  opacity: 0.6;
+  border: 2px solid #dc3545 !important;
 }
 @media screen and (max-width: 992px) {
   .tab-pane .dashboard {

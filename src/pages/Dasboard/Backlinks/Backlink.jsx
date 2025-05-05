@@ -128,8 +128,8 @@ function Backlink() {
         try {
           const url = new URL(b.dealLink);
           const hostnameParts = url.hostname.split('.');
-          const tld = hostnameParts[hostnameParts.length - 1];
-          return tld === filterValues.selectedTld.toLowerCase();
+          const tld = hostnameParts.slice(-2).join('.'); // e.g. co.uk or com
+          return tld.toLowerCase().includes(filterValues.selectedTld.toLowerCase());
         } catch (e) {
           return false;
         }

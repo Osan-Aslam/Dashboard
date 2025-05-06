@@ -33,7 +33,7 @@ function Backlink() {
             "Accept": "text/plain"
           }
         });
-        console.log("Fetched backlinks:", response.data);
+        // console.log("Fetched backlinks:", response.data);
         setBacklinks(response.data);
         setFilteredBacklinks(response.data)
       } catch (error) {

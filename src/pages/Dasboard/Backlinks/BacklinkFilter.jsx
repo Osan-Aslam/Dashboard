@@ -104,10 +104,13 @@ function BacklinkFilter({ onApplyFilters }) {
     member.designation === "Out Reacher"
   );
 
-  const formattedProjects = projects.map(project => ({
-    value: project.id,
-    label: project.projectName,
-  }));
+  const formattedProjects = [
+    { value: "all", label: "All" },
+    ...projects.map(project => ({
+      value: project.id,
+      label: project.projectName,
+    }))
+  ];
 
   useEffect(() => {
     fetch('/tlds.txt')
@@ -137,12 +140,12 @@ function BacklinkFilter({ onApplyFilters }) {
     const filterValues = {
       dealType,
       linkType,
-      projectName,
-      selectedUrl,
-      selectedTag,
-      OutReacherName,
-      selectedLang: selectedLang?.value || "",
-      selectedTld,
+      projectName: projectName === "all" ? "" : projectName,
+      selectedUrl: selectedUrl === "all" ? "" : selectedUrl,
+      selectedTag: selectedTag === "all" ? "" : selectedTag,
+      OutReacherName: OutReacherName === "all" ? "" : OutReacherName,
+      selectedLang: selectedLang?.value === "all" ? "" : selectedLang?.value || "",
+      selectedTld: selectedTld === "all" ? "" : selectedTld,
       priceMin,
       priceMax,
       domainTrafficMin,
@@ -197,31 +200,80 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By project</label>
-                    <Select className='selectDropdown' options={formattedProjects} onChange={(option) => { const selected = projects.find(p => p.id === option.value); handleSelect(selected); }} placeholder="Select a project" />
+                    <Select className='selectDropdown' placeholder="Select a project" options={formattedProjects}
+                      onChange={(option) => {
+                        if (option.value === "all") {
+                          setProjectName("all");
+                        } else {
+                          const selected = projects.find(p => p.id === option.value);
+                          setProjectName(selected?.projectName || "");
+                          handleSelect(selected);
+                        }
+                      }} />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Sub Page</label>
-                    <Select className='selectDropdown' options={urls.map(url => ({ value: url, label: url }))} onChange={(option) => setSelectedUrl(option.value)} placeholder="Select a page URL" />
+                    <Select className='selectDropdown' placeholder="Select a page URL"
+                      options={[
+                        { value: "all", label: "All" },
+                        ...urls.map(url => ({ value: url, label: url }))
+                      ]}
+                      onChange={(option) => {
+                        if (option.value === "all") {
+                          setSelectedUrl("");
+                        } else {
+                          setSelectedUrl(option.value);
+                        }
+                      }}
+                    />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By Anchor</label>
-                    <Select className="selectDropdown" options={anchorTags.length > 0 ? anchorTags.map(tag => ({ value: tag, label: tag })) : []}
-                      value={selectedTag ? { value: selectedTag, label: selectedTag } : null}
-                      onChange={(option) => setSelectedTag(option?.value || "")}
-                      placeholder="Select Anchor Text"
+                    <Select className="selectDropdown" placeholder="Select Anchor Text"
+                      options={[
+                        { value: "all", label: "All" },
+                        ...anchorTags.map(tag => ({ value: tag, label: tag }))
+                      ]}
+                      value={
+                        selectedTag
+                          ? selectedTag === "all"
+                            ? { value: "all", label: "All" }
+                            : { value: selectedTag, label: selectedTag }
+                          : null
+                      }
+                      onChange={(option) => {
+                        if (option?.value === "all") {
+                          setSelectedTag("all");
+                        } else {
+                          setSelectedTag(option?.value || "");
+                        }
+                      }}
                     />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Out Reacher</label>
-                    <Select className="selectDropdown" options={outReachers.map(member => ({ value: member.id, label: member.memberName }))}
-                      onChange={(option) => setOutReacherName(option)}
-                      placeholder="Select Out Reacher"
+                    <Select className="selectDropdown" placeholder="Select Out Reacher"
+                      options={[
+                        { value: "all", label: "All" },
+                        ...outReachers.map(member => ({
+                          value: member.id,
+                          label: member.memberName,
+                        }))
+                      ]}
+                      onChange={(option) => {
+                        if (option?.value === "all") {
+                          setOutReacherName("all");
+                        } else {
+                          setOutReacherName(option.value);
+                        }
+                      }}
                     />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">Link Type</label>
                     <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{linkType || "Link Type"}</a>
                     <ul className="dropdown-menu">
+                      <li className="dropdown-item" onClick={() => setlinkType("All")}>All</li>
                       <li className="dropdown-item" onClick={() => setlinkType("Follow")}>Follow</li>
                       <li className="dropdown-item" onClick={() => setlinkType("NoFollow")}>NoFollow</li>
                     </ul>
@@ -230,6 +282,7 @@ function BacklinkFilter({ onApplyFilters }) {
                     <label htmlFor="">Backlink Cost</label>
                     <a className="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{backlinkType}</a>
                     <ul className="dropdown-menu">
+                      <li className="dropdown-item" onClick={() => setBacklinkType("All")}>All</li>
                       <li className="dropdown-item" onClick={() => setBacklinkType("Free")}>Free</li>
                       <li className="dropdown-item" onClick={() => setBacklinkType("Paid")}>Paid</li>
                       <li className="dropdown-item" onClick={() => setBacklinkType("Exchange")}>Exchange</li>
@@ -277,17 +330,46 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">Language</label>
-                    <Select className="selectDropdown" id="languageSelect" options={languages.map(lang => ({ value: lang.code, label: lang.name }))}
-                      value={selectedLang}
-                      onChange={(option) => setSelectedLang(option)}
-                      placeholder="Select Language"
+                    <Select className="selectDropdown" id="languageSelect" placeholder="Select Language"
+                      options={[
+                        { value: "all", label: "All" },
+                        ...languages.map(lang => ({ value: lang.code, label: lang.name }))
+                      ]}
+                      value={
+                        selectedLang?.value === "all"
+                          ? { value: "all", label: "All" }
+                          : selectedLang
+                      }
+                      onChange={(option) => {
+                        if (option?.value === "all") {
+                          setSelectedLang({ value: "all", label: "All" });
+                        } else {
+                          setSelectedLang(option);
+                        }
+                      }}
                     />
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2 mt-2">
                     <label htmlFor="">TLD</label>
-                    <Select className="selectDropdown" options={tlds.map(tld => ({ value: tld, label: tld }))} value={selectedTld ? { value: selectedTld, label: selectedTld } : null}
-                      onChange={(option) => setSelectedTld(option?.value || "")}
-                      placeholder="Select TLD"
+                    <Select className="selectDropdown" placeholder="Select TLD"
+                      options={[
+                        { value: "all", label: "All" },
+                        ...tlds.map(tld => ({ value: tld, label: tld }))
+                      ]}
+                      value={
+                        selectedTld
+                          ? selectedTld === "all"
+                            ? { value: "all", label: "All" }
+                            : { value: selectedTld, label: selectedTld }
+                          : null
+                      }
+                      onChange={(option) => {
+                        if (option?.value === "all") {
+                          setSelectedTld("all");
+                        } else {
+                          setSelectedTld(option?.value || "");
+                        }
+                      }}
                     />
                   </div>
                 </div>

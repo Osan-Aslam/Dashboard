@@ -102,7 +102,7 @@ const Team = () => {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-  
+
       try {
         document.execCommand('copy');
         $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
@@ -110,11 +110,11 @@ const Team = () => {
       } catch (err) {
         console.error('Fallback copy failed', err);
       }
-  
+
       document.body.removeChild(textArea);
     }
   };
-  
+
 
   const fetchProfilePicture = async (profilePath) => {
     if (!profilePath) return TeamImage;
@@ -143,7 +143,7 @@ const Team = () => {
 
   const handleLeave = async () => {
     if (!memberToLeave) return;
-  
+
     const formData = new FormData();
     formData.append("MemberName", memberToLeave.memberName);
     formData.append("Designation", memberToLeave.designation);
@@ -154,7 +154,7 @@ const Team = () => {
     formData.append("profilePicture", ""); // or memberToLeave.profilePicture if used
     console.log("sending Data :", Object.fromEntries(formData.entries()));
     try {
-      const response =  await axios.patch(
+      const response = await axios.patch(
         `http://207.180.203.98:5030/api/team-members/${memberToLeave.id}`,
         formData,
         {
@@ -169,7 +169,7 @@ const Team = () => {
       setMembers(prev =>
         prev.map(m => m.id === memberToLeave.id ? { ...m, reasonForBeingInactive: reason } : m)
       );
-  
+
       setShows(false);
       setReason("");
       setMemberToLeave(null);
@@ -187,7 +187,7 @@ const Team = () => {
     formData.append("Email", member.email);
     formData.append("ReasonForBeingInactive", ""); // Rejoin: empty string or null
     formData.append("profilePicture", ""); // optional, based on your API
-  
+
     try {
       await axios.patch(`http://207.180.203.98:5030/api/team-members/${member.id}`, formData, {
         headers: {
@@ -195,7 +195,7 @@ const Team = () => {
           "Content-Type": "multipart/form-data",
         }
       });
-  
+
       // Update the local state
       setMembers(prev =>
         prev.map(m => m.id === member.id ? { ...m, reasonForBeingInactive: "" } : m)
@@ -263,8 +263,11 @@ const Team = () => {
                           </Link>
                           <FaRegEnvelope className='icon' onClick={() => copyToClipboard(member.email)} />
                           <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
-                          <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => { setShows(true); setMemberToLeave(member);}} />
-                          <img src={Userin} className='exitUser' alt="Userin" onClick={() => handleRejoin(member)} />
+                          {!member.reasonForBeingInactive ? (
+                            <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => { setShows(true); setMemberToLeave(member);}}/>
+                          ) : (
+                            <img src={Userin} className='exitUser userin' alt="Userin" onClick={() => handleRejoin(member)}/>
+                          )}
                         </div>
                       </div>
                     </div>

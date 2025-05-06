@@ -96,7 +96,7 @@ function Backlink() {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-  
+
       try {
         document.execCommand('copy');
         $(".email-copied").removeClass("d-none").text(`Copied: ${email}`);
@@ -104,7 +104,7 @@ function Backlink() {
       } catch (err) {
         console.error('Fallback copy failed', err);
       }
-  
+
       document.body.removeChild(textArea);
     }
   };
@@ -203,7 +203,7 @@ function Backlink() {
     if (filterValues.durationFilter && filterValues.durationFilter !== "All") {
       const now = new Date();
       let fromDate;
-    
+
       switch (filterValues.durationFilter) {
         case "Last 24 hours":
           fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -220,7 +220,7 @@ function Backlink() {
         default:
           fromDate = null;
       }
-    
+
       if (fromDate) {
         filtered = filtered.filter(b => {
           const createdAt = new Date(b.createdAt);
@@ -228,7 +228,7 @@ function Backlink() {
         });
       }
     }
-    
+
     console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };
@@ -254,7 +254,7 @@ function Backlink() {
         <BacklinkFilter onApplyFilters={applyFilters} />
       </div>
       <div className='alert alert-danger p-2 col-3 mx-auto text-center email-copied d-none'>Email Copied</div>
-      <div className='d-lg-flex justify-content-between p-3 align-items-center'>
+      <div className='d-flex justify-content-lg-between p-3 align-items-center flex-lg-row flex-column'>
         <p className='result'>Results: <span>{`${sortedBacklinks.length} sites`}</span></p>
         <div className='d-lg-flex align-items-center'>
           <div className='d-flex align-items-center viewTime'>
@@ -355,31 +355,32 @@ function Backlink() {
               )}
           </tbody>
         </table>
-        <div className='d-flex align-items-center justify-content-between'>
+        <div className='d-flex align-items-center justify-content-between flex-lg-row flex-column'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">
-              {/* Prev Button */}
               <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                 <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
                   <IoIosArrowBack /> Prev
                 </button>
               </li>
-
-              {/* Show page numbers (1, 2, 3 only) */}
-              {[1, 2, 3].map((pageNum) => (
-                pageNum <= totalPages && (
-                  <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
-                    <button className="page-link" onClick={() => handlePageChange(pageNum)}>
-                      {pageNum}
-                    </button>
-                  </li>
-                )
+              {[1, 2].map(pageNum => (
+                <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => handlePageChange(pageNum)}>{pageNum}</button>
+                </li>
               ))}
-
-              {/* Show "..." if more pages exist */}
-              {totalPages > 3 && <li className="page-item disabled"><span className="page-link">...</span></li>}
-
-              {/* Next Button */}
+              {currentPage <= 3 && (
+                <li className={`page-item ${currentPage === 3 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => handlePageChange(3)}>3</button>
+                </li>
+              )}
+              {currentPage > 3 && (
+                <>
+                  <li className="page-item disabled"><span className="page-link">...</span></li>
+                  <li className="page-item active">
+                    <button className="page-link" onClick={() => handlePageChange(currentPage)}>{currentPage}</button>
+                  </li>
+                </>
+              )}
               <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                 <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
                   Next <IoIosArrowForward />

@@ -62,9 +62,10 @@ function Project() {
     }
   };
 
-  const handleDeleteClick = (id) => {
-    setSelectedProjectId(id);
-    setShow(true);
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleDeleteCancel = () => {
@@ -122,11 +123,11 @@ function Project() {
         <div className='d-lg-flex justify-content-between p-3 align-items-center'>
           <p className='result'>Results: <span>{projects.length} sites</span></p>
           <div className='d-lg-flex align-items-center'>
-            <div className='searchTag'>
+            <div className='searchTag d-flex align-items-center justify-content-between'>
               <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} name="" placeholder='Search Project' />
               <CiSearch />
             </div>
-            <div className='d-flex align-items-center viewTime'>
+            <div className='d-flex align-items-center viewTime justify-content-between mt-lg-0 mt-2'>
               <span>View By Duration:</span>
               <div className="dropdown">
                 <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> Last 24 hours</button>
@@ -141,7 +142,7 @@ function Project() {
           </div>
         </div>
       </div>
-      <div className="table-responsive px-3">
+      <div className="table-responsive px-lg-3 px-1">
         <table className="table">
           <thead>
             <tr>
@@ -205,30 +206,38 @@ function Project() {
             }
           </tbody>
         </table>
-        <div className='d-flex align-items-center justify-content-between'>
+        <div className='d-flex align-items-center justify-content-between flex-lg-row flex-column'>
           <nav aria-label="Page navigation example">
             <ul className="pagination">
               <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <button className="page-link" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
                   <IoIosArrowBack /> Prev
                 </button>
               </li>
-
-              {[...Array(totalPages)].map((_, idx) => (
-                <li key={idx} className={`page-item ${currentPage === idx + 1 ? 'active' : ''}`}>
-                  <button className="page-link" onClick={() => setCurrentPage(idx + 1)}>
-                    {idx + 1}
-                  </button>
+              {[1, 2].map(pageNum => (
+                <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => handlePageChange(pageNum)}>{pageNum}</button>
                 </li>
               ))}
-
+              {currentPage <= 3 && (
+                <li className={`page-item ${currentPage === 3 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => handlePageChange(3)}>3</button>
+                </li>
+              )}
+              {currentPage > 3 && (
+                <>
+                  <li className="page-item disabled"><span className="page-link">...</span></li>
+                  <li className="page-item active">
+                    <button className="page-link" onClick={() => handlePageChange(currentPage)}>{currentPage}</button>
+                  </li>
+                </>
+              )}
               <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                <button className="page-link" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}>
+                <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
                   Next <IoIosArrowForward />
                 </button>
               </li>
             </ul>
-
           </nav>
           <div className='d-flex align-items-center viewTime'>
             <span>Show:</span>
@@ -247,7 +256,6 @@ function Project() {
                 ))}
               </ul>
             </div>
-
           </div>
         </div>
       </div>

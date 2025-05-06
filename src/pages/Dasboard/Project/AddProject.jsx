@@ -129,7 +129,7 @@ function AddProject() {
   return (
     <>
       <h3 className='mt-3 ms-2'>Add New Project</h3>
-      <div className='col-lg-8 mx-auto mt-4 add-project p-4'>
+      <div className='col-lg-8 mx-auto mt-4 add-project p-lg-4 p-2'>
         {error && (
           <div className='alert alert-danger p-2 col-5 mx-auto text-center'>
             {error}

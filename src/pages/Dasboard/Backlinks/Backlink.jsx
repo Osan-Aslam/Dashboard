@@ -33,9 +33,9 @@ function Backlink() {
             "Accept": "text/plain"
           }
         });
-        console.log("Fetched backlinks:", response.data);
-        setBacklinks(response.data || []);
-        setFilteredBacklinks(response.data || []);
+        // console.log("Fetched backlinks:", response.data);
+        setBacklinks(response.data);
+        setFilteredBacklinks(response.data)
       } catch (error) {
         console.log("Error fetching backlinks:", error);
       }

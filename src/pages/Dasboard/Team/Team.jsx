@@ -7,6 +7,7 @@ import { HiPencil } from "react-icons/hi2";
 import { FaRegEnvelope } from "react-icons/fa";
 import TeamImage from "../../../assets/image/Teamimage.png";
 import exitUser from "../../../assets/icon/user_exit.svg"
+import Userin from "../../../assets/icon/user-in.svg"
 import { useEffect } from 'react';
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import axios from 'axios';
@@ -177,6 +178,33 @@ const Team = () => {
       alert("Failed to update leave status.");
     }
   };
+  const handleRejoin = async (member) => {
+    const formData = new FormData();
+    formData.append("MemberName", member.memberName);
+    formData.append("Designation", member.designation);
+    formData.append("JoiningDate", member.joiningDate);
+    formData.append("BasicSalary", member.basicSalary);
+    formData.append("Email", member.email);
+    formData.append("ReasonForBeingInactive", ""); // Rejoin: empty string or null
+    formData.append("profilePicture", ""); // optional, based on your API
+  
+    try {
+      await axios.patch(`http://207.180.203.98:5030/api/team-members/${member.id}`, formData, {
+        headers: {
+          "Accept": "*/*",
+          "Content-Type": "multipart/form-data",
+        }
+      });
+  
+      // Update the local state
+      setMembers(prev =>
+        prev.map(m => m.id === member.id ? { ...m, reasonForBeingInactive: "" } : m)
+      );
+    } catch (error) {
+      console.error("Error rejoining member:", error);
+      alert("Failed to rejoin member. Please try again.");
+    }
+  };
   const handleClose = () => setShows(false);
 
   return (
@@ -188,11 +216,11 @@ const Team = () => {
       <div className='d-lg-flex justify-content-between p-3 align-items-center'>
         <p className='result'>Total Team Members: <span>{filterMember.length}</span></p>
         <div className='d-lg-flex align-items-center'>
-          <div className='searchTag'>
+          <div className='searchTag d-flex align-items-center justify-content-between'>
             <input type="text" onChange={(e) => setSearch(e.target.value)} value={search} name="" placeholder='Search Team Member' />
             <CiSearch />
           </div>
-          <div className='d-flex align-items-center viewTime'>
+          <div className='d-flex align-items-center viewTime mt-lg-0 mt-2'>
             <span>View By Designation:</span>
             <div className="dropdown">
               <button className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> {selectedDesignation || "All Members"}</button>
@@ -213,7 +241,7 @@ const Team = () => {
         ) : (
           filterMember.map((member) => (
             <div className="col-lg-4" key={member.id}>
-              <div className={`card mb-3 ${member.reasonForBeingInactive ? 'left-member-card' : ''}`}>
+              <div className={`card mb-3 m-0 ${member.reasonForBeingInactive ? 'left-member-card' : ''}`}>
                 <div className="row g-0 align-items-center">
                   <>
                     <div className="col-md-4 text-center">
@@ -235,10 +263,8 @@ const Team = () => {
                           </Link>
                           <FaRegEnvelope className='icon' onClick={() => copyToClipboard(member.email)} />
                           <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
-                          <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => {
-                            setShows(true);
-                            setMemberToLeave(member); // set the current member for leaving
-                          }} />
+                          <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => { setShows(true); setMemberToLeave(member);}} />
+                          <img src={Userin} className='exitUser' alt="Userin" onClick={() => handleRejoin(member)} />
                         </div>
                       </div>
                     </div>

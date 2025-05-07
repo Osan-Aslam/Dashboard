@@ -24,7 +24,7 @@ function Backlink() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
 
-
+  // Fetch Backlinks from api
   useEffect(() => {
     const fetchBacklinks = async () => {
       try {
@@ -44,6 +44,7 @@ function Backlink() {
     fetchBacklinks();
   }, []);
 
+  // Format number from price, convert 1000 into 1k
   const formatNumber = (num) => {
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
@@ -79,6 +80,7 @@ function Backlink() {
 
   const totalPages = Math.ceil(filteredBacklinks.length / itemsPerPage);
 
+  // Copy Email at clipboards
   const copyToClipboard = (email) => {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(email)
@@ -109,6 +111,7 @@ function Backlink() {
     }
   };
 
+  // Filters for backlinks 
   const applyFilters = (filterValues) => {
     setFilters(filterValues);
 
@@ -200,10 +203,10 @@ function Backlink() {
       });
     }
 
+    // filters using date
     if (filterValues.durationFilter && filterValues.durationFilter !== "All") {
       const now = new Date();
       let fromDate;
-
       switch (filterValues.durationFilter) {
         case "Last 24 hours":
           fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -232,16 +235,17 @@ function Backlink() {
     console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };
-
+  // Pagination from backlinks 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
 
+  // handle counting for pagination
   const handleItemsPerPageChange = (count) => {
     setItemsPerPage(count);
-    setCurrentPage(1);  // Reset to the first page when items per page changes
+    setCurrentPage(1);
   };
 
   return (

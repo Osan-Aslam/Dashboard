@@ -3,7 +3,6 @@ import { RxCross2 } from "react-icons/rx";
 import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import $, { event } from "jquery";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +22,7 @@ function AddProject() {
   const [projectName, setprojectName] = useState("");
   const navigate = useNavigate();
 
-  // Sumbit form
+  // Sumbit form and add Project
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -60,7 +59,7 @@ function AddProject() {
     console.log(anchorTags);
 
     // console.log("Sending data:", Object.fromEntries(formData.entries()));
-
+    // send request to api and add projects
     try {
       const response = await axios.post(`http://207.180.203.98:5030/api/projects`, formData, {
         headers: {
@@ -80,8 +79,7 @@ function AddProject() {
       }, 3000);
     }
   }
-  // fetch Sitemap URL 
-
+  // fetch Sitemap URL from api
   const fetchSitemapURL = async () => {
     try {
 
@@ -101,7 +99,7 @@ function AddProject() {
       }, 3000);
     }
   }
-
+  // for type tags in input fields
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && inputText.trim()) {
       e.preventDefault();
@@ -113,15 +111,12 @@ function AddProject() {
       setanchorTags(anchorTags.slice(0, -1));
     }
   };
-
+  // remove tag
   const removeTag = (index) => {
     setanchorTags(anchorTags.filter((_, i) => i !== index));
   };
 
-  const handleInput = () => {
-    setText(divRef.current.innerText);
-  }
-
+  // remove fetch div 
   const removeFetchDiv = (index) => {
     setUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }

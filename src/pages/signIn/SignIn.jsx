@@ -1,7 +1,6 @@
 import { useState } from "react" ;
 import logo from "../../assets/icon/main-logo.svg";
 import {Link, useNavigate} from 'react-router-dom'
-import $, { event } from "jquery";
 import axios from "axios";
 import Alert from 'react-bootstrap/Alert';
 
@@ -20,6 +19,7 @@ function SignIn() {
       alert("Please enter username and password.");
       return;
     }
+    
     const requestBody = {
       username: User,
       password: password,

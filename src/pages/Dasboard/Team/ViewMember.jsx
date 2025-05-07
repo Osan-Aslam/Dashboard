@@ -4,7 +4,6 @@ import Card from 'react-bootstrap/Card';
 import defaultImage from '../../../assets/image/Teamimage.png'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 
 function ViewMember() {

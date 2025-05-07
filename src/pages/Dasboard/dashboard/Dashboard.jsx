@@ -8,6 +8,7 @@ function Dashboard() {
   const [backlinks, setBacklinks] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
 
+  //fetch all backlinks from api
   useEffect(() => {
     const fetchBacklinks = async () => {
       try {
@@ -25,7 +26,7 @@ function Dashboard() {
 
     fetchBacklinks();
   }, []);
-
+  //fetch all projects from api
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -43,7 +44,7 @@ function Dashboard() {
 
     fetchProjects();
   }, []);
-
+  //fetch all team Members from api
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -56,12 +57,14 @@ function Dashboard() {
     fetchMembers();
   }, []);
 
+  // format value for convert it 1000 into 1k
   const formatNumber = (num) => {
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
     return num;
   };
 
+  // for display values and its length
   const totalBacklinks = backlinks.length;
   const totalProjects = projects.length;
   const totalGuestPosts = backlinks.filter(b => b.dealType === "Guest Post").length;
@@ -72,6 +75,7 @@ function Dashboard() {
   const totalSpent = backlinks.reduce((sum, b) => sum + (b.price || 0), 0).toFixed(2);
   const totalTeamMembers = teamMembers.length;
 
+  // Stats for dashboard values
   const dashboardStats = [
     { value: totalBacklinks, label: 'Total Backlinks' },
     { value: totalProjects, label: 'Total Projects' },

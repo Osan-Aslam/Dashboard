@@ -14,7 +14,6 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import $ from "jquery";
-import { memo } from 'react';
 
 const Team = () => {
   const [members, setMembers] = useState([]);

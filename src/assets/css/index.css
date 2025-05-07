@@ -719,4 +719,16 @@ form .signin-btn:hover {
   .main-form form {
     width: 90%;
   }
+
+  .nav-pills .logout {
+    background-color: #FFE7E7;
+    color: #FF5252;
+    font-weight: 400;
+    position: static;
+    width: 35%;
+  }
+  
+  .navbar-toggler .bars{
+    font-size: 25px;
+  }
 }

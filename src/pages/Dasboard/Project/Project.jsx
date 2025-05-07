@@ -33,8 +33,7 @@ function Project() {
     currentPage * itemsPerPage
   );
 
-
-
+  // fetch all projects from api
   useState(() => {
     const response = axios.get(`http://207.180.203.98:5030/api/projects`, {
       headers: {
@@ -48,6 +47,7 @@ function Project() {
     });
   }, []);
 
+  // delete project by getting its id
   const DeletProject = async (id) => {
     try {
       const response = await axios.delete(`http://207.180.203.98:5030/api/projects/${id}`, {
@@ -62,17 +62,20 @@ function Project() {
     }
   };
 
+  // pagination
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
 
+  // for handle modal cancel
   const handleDeleteCancel = () => {
     setShow(false);
     setSelectedProjectId(null);
   };
 
+  // for confirm delete in modal
   const handleDeleteConfirm = async () => {
     if (selectedProjectId) {
       await DeletProject(selectedProjectId);
@@ -88,6 +91,7 @@ function Project() {
     });
   });
 
+  // fetch all backlinks from api
   useEffect(() => {
     const fetchBacklinks = async () => {
       try {
@@ -105,7 +109,7 @@ function Project() {
 
     fetchBacklinks();
   }, []);
-
+  // format value for convert it 1000 into 1k
   const formatNumber = (num) => {
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
@@ -114,7 +118,6 @@ function Project() {
 
   return (
     <>
-
       <div className='main-project'>
         <div className='d-flex justify-content-between p-3'>
           <h3>Our Projects</h3>

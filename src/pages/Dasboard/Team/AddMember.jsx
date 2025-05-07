@@ -18,6 +18,7 @@ const AddTeam = () => {
     profilePicture: null,
   });
 
+  //get image and set it
   useEffect(() => {
     const getImage = async () => {
       if(member.profilePicture) {
@@ -35,6 +36,7 @@ const AddTeam = () => {
     setMember({ ...member, [name]: value,});
   };
 
+  // when user upload its image
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -49,6 +51,7 @@ const AddTeam = () => {
     }
   };
 
+  // submit form and add teamMember
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -81,6 +84,7 @@ const AddTeam = () => {
     }
   };
 
+  // get profilePictureURL and send to api for getting image
   const fetchProfilePicture = async (profilePictureUrl) => {
     try {
       const response = await axios.get(`http://207.180.203.98:5030/api/team-members/profile-picture?profilePath=${profilePictureUrl}`, {
@@ -96,7 +100,6 @@ const AddTeam = () => {
       return null;
     }
   };
-
 
   return (
     <div>

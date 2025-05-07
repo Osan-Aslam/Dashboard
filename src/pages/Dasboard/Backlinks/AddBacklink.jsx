@@ -40,6 +40,7 @@ function AddBacklink() {
   const [selectedLang, setSelectedLang] = useState("");
   const navigate = useNavigate();
 
+  // function for AddBacklinks 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!LiveLink || !LiveLink.startsWith("http")) {
@@ -50,7 +51,7 @@ function AddBacklink() {
 
     const url = new URL(LiveLink);
     const dealLink = `${url.protocol}//${url.hostname}/`;
-
+    //formData
     const formData = new FormData();
     formData.append("ProjectId", ProjectId);
     formData.append("DomainAuthority", DomainAuthority);
@@ -73,6 +74,7 @@ function AddBacklink() {
 
     console.log("Sending Data: ", Object.fromEntries(formData.entries()));
 
+    // Fetch All Backlinks from api
     try {
       const response = await axios.post(`http://207.180.203.98:5030/api/Backlinks`, formData, {
         headers: {
@@ -91,6 +93,7 @@ function AddBacklink() {
     }
   }
 
+  // Fetch All Projects from api
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -108,6 +111,7 @@ function AddBacklink() {
     fetchProjects();
   }, []);
 
+  // handle submit when user want to select project
   const handleSelect = (project) => {
     if (project) {
       console.log("Selected Project:", project)
@@ -126,8 +130,7 @@ function AddBacklink() {
     }
   };
 
-  // fetch Sitemap URL 
-
+  // fetch Sitemap URL from api
   const fetchSitemapURL = async (project) => {
     try {
       setUrls([]);
@@ -149,6 +152,7 @@ function AddBacklink() {
     }
   }
 
+  // Fetch Team Members from api
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -173,10 +177,13 @@ function AddBacklink() {
   //   member.designation === "Manager"
   // );
 
+  // Add Multiple projects Rows 
   const [rows, setRows] = useState([{ id: 1 }]);
   const addRow = () => {
     setRows([...rows, { id: rows.length + 1 }]);
   }
+
+  // Remove Multiple Projects Rows
   const removeRow = (id) => {
     setRows(rows.filter(row => row.id !== id))
   }
@@ -191,8 +198,9 @@ function AddBacklink() {
   const formattedProjects = projects.map(project => ({
     value: project.id,
     label: project.projectName,
-  }));
-
+  }));  
+  
+  // Fetch Languages from json File.
   useEffect(() => {
     fetch('/languages.json')
       .then((res) => res.json())

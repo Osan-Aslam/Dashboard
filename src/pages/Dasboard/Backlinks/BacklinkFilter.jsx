@@ -19,7 +19,7 @@ function BacklinkFilter({ onApplyFilters }) {
   const [teamMembers, setTeamMembers] = useState([]);
   const [dealType, setdealType] = useState("");
   const [linkType, setlinkType] = useState("");
-  const [backlinkType, setBacklinkType] = useState("Free");
+  const [backlinkType, setBacklinkType] = useState("All");
   const [tlds, setTlds] = useState([]);
   const [selectedTld, setSelectedTld] = useState('');
   const [languages, setLanguages] = useState([]);
@@ -36,6 +36,7 @@ function BacklinkFilter({ onApplyFilters }) {
   const [mozDaMax, setMozDaMax] = useState("");
   const [durationFilter, setDurationFilter] = useState("All");
 
+  // handle form submit  
   const handleSelect = (project) => {
     if (project) {
       setProjectId(project.id);
@@ -51,8 +52,8 @@ function BacklinkFilter({ onApplyFilters }) {
       }
     }
   };
-  // fetch Sitemap URL 
 
+  // Fetch sitemapURL from api
   const fetchSitemapURL = async (project) => {
     try {
       const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
@@ -72,6 +73,7 @@ function BacklinkFilter({ onApplyFilters }) {
     }
   }
 
+  // Fetch projects from api
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -88,7 +90,8 @@ function BacklinkFilter({ onApplyFilters }) {
 
     fetchProjects();
   }, []);
-
+  
+  // Fetch Team Members from api
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -112,6 +115,7 @@ function BacklinkFilter({ onApplyFilters }) {
     }))
   ];
 
+  //fetch all TLDS form txt file
   useEffect(() => {
     fetch('/tlds.txt')
       .then((res) => res.text())
@@ -124,6 +128,7 @@ function BacklinkFilter({ onApplyFilters }) {
       });
   }, []);
 
+  // fetch all Languages from json file
   useEffect(() => {
     fetch('/languages.json')
       .then((res) => res.json())
@@ -136,6 +141,7 @@ function BacklinkFilter({ onApplyFilters }) {
       .catch((err) => console.error("Error fetching languages:", err));
   }, []);
 
+  // apply filters for backlinks 
   const handleApplyFilters = () => {
     const filterValues = {
       dealType,
@@ -160,13 +166,36 @@ function BacklinkFilter({ onApplyFilters }) {
       durationFilter,
     };
     console.log(filterValues);
-    onApplyFilters(filterValues); // Call parent function
+    onApplyFilters(filterValues);
   };
 
-
+  // Reset all filters
+  const handleResetFilters = () => {
+    setdealType("");
+    setlinkType("");
+    setProjectName("all");
+    setSelectedUrl("");
+    setUrls([]);
+    setSelectedTag("");
+    setAnchorTags([]);
+    setOutReacherName("");
+    setSelectedLang("");
+    setSelectedTld("");
+    setPriceMin("");
+    setPriceMax("");
+    setDomainTrafficMin("");
+    setDomainTrafficMax("");
+    setUsTrafficMin("");
+    setUsTrafficMax("");
+    setMozDaMin("");
+    setMozDaMax("");
+    setMozDrMin("");
+    setMozDrMax("");
+    setBacklinkType("All");
+    setDurationFilter("All");
+  };
   return (
     <>
-
       <div className='filters p-2'>
         <div className="accordion" id="accordionExample">
           <div className="accordion-item">
@@ -200,32 +229,52 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By project</label>
-                    <Select className='selectDropdown' placeholder="Select a project" options={formattedProjects}
+                    <Select
+                      className="selectDropdown"
+                      placeholder="Select By project"
+                      options={formattedProjects}
+                      value={
+                        projectName
+                          ? formattedProjects.find(p => p.label === projectName) || null
+                          : null
+                      }
                       onChange={(option) => {
-                        if (option.value === "all") {
-                          setProjectName("all");
+                        if (option?.value === "all") {
+                          setProjectName("");
                         } else {
                           const selected = projects.find(p => p.id === option.value);
                           setProjectName(selected?.projectName || "");
                           handleSelect(selected);
                         }
-                      }} />
+                      }}
+                    />
+
+
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Sub Page</label>
-                    <Select className='selectDropdown' placeholder="Select a page URL"
+                    <Select
+                      className="selectDropdown"
+                      placeholder="Select Sub Page"
                       options={[
                         { value: "all", label: "All" },
                         ...urls.map(url => ({ value: url, label: url }))
                       ]}
+                      value={
+                        selectedUrl
+                          ? { value: selectedUrl, label: selectedUrl }
+                          : null
+                      }
                       onChange={(option) => {
-                        if (option.value === "all") {
+                        if (option?.value === "all") {
                           setSelectedUrl("");
                         } else {
                           setSelectedUrl(option.value);
                         }
                       }}
                     />
+
+
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By Anchor</label>
@@ -252,7 +301,8 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Out Reacher</label>
-                    <Select className="selectDropdown" placeholder="Select Out Reacher"
+                    <Select
+                      className="selectDropdown" placeholder="Select Out Reacher"
                       options={[
                         { value: "all", label: "All" },
                         ...outReachers.map(member => ({
@@ -260,11 +310,12 @@ function BacklinkFilter({ onApplyFilters }) {
                           label: member.memberName,
                         }))
                       ]}
+                      value={OutReacherName === "all" ? { value: "all", label: "All" } : outReachers.find(m => m.id === OutReacherName) ? { value: OutReacherName, label: outReachers.find(m => m.id === OutReacherName)?.memberName, } : null}
                       onChange={(option) => {
                         if (option?.value === "all") {
                           setOutReacherName("all");
                         } else {
-                          setOutReacherName(option.value);
+                          setOutReacherName(option?.value || "");
                         }
                       }}
                     />
@@ -374,6 +425,7 @@ function BacklinkFilter({ onApplyFilters }) {
                   </div>
                 </div>
                 <button className='btn dashboard-btn py-2 px-3' onClick={handleApplyFilters}>Apply Filters</button>
+                <button className='btn dashboard-btn py-2 px-3 ms-3' onClick={handleResetFilters}>Reset Filters</button>
               </div>
             </div>
           </div>

@@ -18,7 +18,7 @@ function UpdateMember() {
 
   const [loadingProject, setLoadingProject] = useState(true);
 
-
+  // send request for update by id 
   useEffect(() => {
     const response = axios.get(`http://207.180.203.98:5030/api/projects/${id}`, {
       headers: {
@@ -52,12 +52,13 @@ function UpdateMember() {
     });
   }, [id]);
 
+  // fetch sitemapURL
   useEffect(() => {
     if (sitemapURL) {
       fetchSitemapPages(sitemapURL);
     }
   }, [sitemapURL]);
-
+  // fetch sitemapURL from api
   const fetchSitemapPages = async (sitemapURL) => {
     try {
 
@@ -73,6 +74,7 @@ function UpdateMember() {
     }
   }
 
+  // on submit form and update projects
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -96,6 +98,7 @@ function UpdateMember() {
     })
     console.log('Form Submitted');
   };
+  // for typing tag in input fields
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && inputText.trim()) {
       e.preventDefault();
@@ -107,11 +110,10 @@ function UpdateMember() {
       setanchorTags(anchorTags.slice(0, -1));
     }
   };
+  // for remove tag 
   const removeTag = (index) => {
     setanchorTags(anchorTags.filter((_, i) => i !== index));
   };
-
-
   return (
     <>
       <h3 className='mt-3 ms-2'>Update Project</h3>

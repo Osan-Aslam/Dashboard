@@ -41,6 +41,7 @@ function UpdateBacklink() {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
+	// fetch single backlink by id and update them 
 	useEffect(() => {
 		const fetchBacklink = async () => {
 			try {
@@ -83,7 +84,7 @@ function UpdateBacklink() {
 	}, [id]);
 
 
-
+  // submit form and update them
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!LiveLink || !LiveLink.startsWith("http")) {
@@ -132,7 +133,7 @@ function UpdateBacklink() {
 			}, 3000);
 		}
 	}
-
+	// fetch projects from api
 	useEffect(() => {
 		const fetchProjects = async () => {
 			try {
@@ -151,6 +152,7 @@ function UpdateBacklink() {
 		fetchProjects();
 	}, []);
 
+	// handle and select projects and its other value
 	const handleSelect = (project) => {
 		if (project) {
 			setProjectId(project.id);
@@ -167,7 +169,7 @@ function UpdateBacklink() {
 		}
 	};
 
-	// fetch Sitemap URL 
+	// fetch Sitemap URL from api
 	const fetchSitemapURL = async (project) => {
 		try {
 			const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${encodeURIComponent(project.sitemapURL)}`, {
@@ -186,7 +188,7 @@ function UpdateBacklink() {
 			}, 3000);
 		}
 	}
-
+//  fetch teamMembers from api
 	useEffect(() => {
 		const fetchMembers = async () => {
 			try {
@@ -198,6 +200,7 @@ function UpdateBacklink() {
 		};
 		fetchMembers();
 	}, []);
+
 	const contentWriters = teamMembers.filter(member =>
 		member.designation === "Content Writer"
 	);
@@ -208,6 +211,7 @@ function UpdateBacklink() {
 		member.designation === "Manager"
 	);
 
+	// add multiple row for add backlinks
 	const [rows, setRows] = useState([{ id: 1 }]);
 	const addRow = () => {
 		setRows([...rows, { id: rows.length + 1 }]);
@@ -216,6 +220,7 @@ function UpdateBacklink() {
 		setRows(rows.filter(row => row.id !== id))
 	}
 
+	// fetch languages from json file
 	useEffect(() => {
 		fetch('/languages.json')
 			.then((res) => res.json())

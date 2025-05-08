@@ -11,7 +11,7 @@ import $, { error, event } from "jquery";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import Spinner from 'react-bootstrap/Spinner';
 
 function Project() {
   const [projects, setProjects] = useState([]);
@@ -21,6 +21,8 @@ function Project() {
   const [backlinks, setBacklinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const filteredProjects = projects.filter(project =>
     project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -35,12 +37,14 @@ function Project() {
 
   // fetch all projects from api
   useState(() => {
+    setIsLoading(true);
     const response = axios.get(`http://207.180.203.98:5030/api/projects`, {
       headers: {
         'Accept': '*/*',
       }
     }).then(response => {
       setProjects(response.data);
+      setIsLoading(false);
       console.log("projects: ", response.data);
     }).catch(error => {
       console.error("Error fetching Projects:", error);
@@ -106,7 +110,6 @@ function Project() {
         console.error('Error: ', error);
       }
     };
-
     fetchBacklinks();
   }, []);
   // format value for convert it 1000 into 1k
@@ -161,9 +164,18 @@ function Project() {
             </tr>
           </thead>
           <tbody>
-            {
+            {isLoading ? (
+              <tr>
+                <td colSpan="10" className="text-center">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </td>
+              </tr>
+            ) : (
               projects.length > 0 ? (
-                paginatedProjects.filter(project => project.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+                paginatedProjects
+                  .filter(project => project.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((project, index) => {
                     const projectBacklinks = backlinks.filter(b => b.project?.id === project.id);
                     const totalBacklinks = projectBacklinks.length;
@@ -202,11 +214,12 @@ function Project() {
               ) : (
                 <tr>
                   <td colSpan="10" className='text-center'>
-                    <h5>No Prject Found</h5>
+                    <h5>No Project Found</h5>
                   </td>
                 </tr>
               )
-            }
+            )}
+
           </tbody>
         </table>
         <div className='d-flex align-items-center justify-content-between flex-lg-row flex-column'>

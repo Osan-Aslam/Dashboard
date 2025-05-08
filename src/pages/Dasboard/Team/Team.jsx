@@ -14,6 +14,7 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import $ from "jquery";
+import Spinner from 'react-bootstrap/Spinner';
 
 const Team = () => {
   const [members, setMembers] = useState([]);
@@ -24,12 +25,12 @@ const Team = () => {
   const [reason, setReason] = useState("");
   const [memberToLeave, setMemberToLeave] = useState(null);
   const [shows, setShows] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const hendleDelete = async (id) => {
-    // Set the member to delete
     const member = members.find(member => member.id === id);
-    setMemberToDelete(member); // Set the member to be deleted
-    setShow(true); // Show the modal
+    setMemberToDelete(member);
+    setShow(true);
   }
 
   const handleDeleteConfirm = async () => {
@@ -56,12 +57,13 @@ const Team = () => {
   }
 
   const handleDeleteCancel = () => {
-    setShow(false); // Close the modal without deleting
-    setMemberToDelete(null); // Reset memberToDelete
+    setShow(false);
+    setMemberToDelete(null);
   }
 
   useEffect(() => {
     const fetchMembers = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get("http://207.180.203.98:5030/api/team-members");
         const fetchMembers = response.data;
@@ -79,6 +81,8 @@ const Team = () => {
         // console.log(members.profilePictureUrl);
       } catch (error) {
         console.error("Error fetching team members:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchMembers();
@@ -235,8 +239,12 @@ const Team = () => {
       </div>
       <div className='alert alert-danger p-2 col-3 mx-auto text-center email-copied d-none'>Email Copied</div>
       <div className='row m-auto'>
-        {filterMember.length === 0 ? (
-          <p></p>
+        {isLoading ? (
+          <div className='text-center'>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         ) : (
           filterMember.map((member) => (
             <div className="col-lg-4" key={member.id}>
@@ -250,9 +258,6 @@ const Team = () => {
                       <div className="card-body text-lg-start text-center">
                         <h5 className="card-title mb-1">{member.memberName}</h5>
                         <p className="card-text mb-1">{member.designation}</p>
-                        {/* {member.reasonForBeingInactive && (
-                          <p className="text-danger small">Left: {member.reasonForBeingInactive}</p>
-                        )} */}
                         <div>
                           <Link to={`/team/viewMember/${member.id}`}>
                             <FaEye className='icon' />
@@ -263,9 +268,9 @@ const Team = () => {
                           <FaRegEnvelope className='icon' onClick={() => copyToClipboard(member.email)} />
                           <RiDeleteBin4Fill className="icon delete-icon" onClick={() => hendleDelete(member.id)} />
                           {!member.reasonForBeingInactive ? (
-                            <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => { setShows(true); setMemberToLeave(member);}}/>
+                            <img src={exitUser} className='exitUser' alt="exitUser" onClick={() => { setShows(true); setMemberToLeave(member); }} />
                           ) : (
-                            <img src={Userin} className='exitUser userin' alt="Userin" onClick={() => handleRejoin(member)}/>
+                            <img src={Userin} className='exitUser userin' alt="Userin" onClick={() => handleRejoin(member)} />
                           )}
                         </div>
                       </div>

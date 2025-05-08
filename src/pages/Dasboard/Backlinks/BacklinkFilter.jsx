@@ -90,7 +90,7 @@ function BacklinkFilter({ onApplyFilters }) {
 
     fetchProjects();
   }, []);
-  
+
   // Fetch Team Members from api
   useEffect(() => {
     const fetchMembers = async () => {
@@ -193,7 +193,32 @@ function BacklinkFilter({ onApplyFilters }) {
     setMozDrMax("");
     setBacklinkType("All");
     setDurationFilter("All");
+
+    // Show all backlinks after reset
+    onApplyFilters({
+      dealType: "",
+      linkType: "",
+      projectName: "",
+      selectedUrl: "",
+      selectedTag: "",
+      OutReacherName: "",
+      selectedLang: "",
+      selectedTld: "",
+      priceMin: "",
+      priceMax: "",
+      domainTrafficMin: "",
+      domainTrafficMax: "",
+      usTrafficMin: "",
+      usTrafficMax: "",
+      mozDaMin: "",
+      mozDaMax: "",
+      mozDrMin: "",
+      mozDrMax: "",
+      backlinkType: "All",
+      durationFilter: "All"
+    });
   };
+
   return (
     <>
       <div className='filters p-2'>
@@ -248,8 +273,6 @@ function BacklinkFilter({ onApplyFilters }) {
                         }
                       }}
                     />
-
-
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select Sub Page</label>
@@ -273,8 +296,6 @@ function BacklinkFilter({ onApplyFilters }) {
                         }
                       }}
                     />
-
-
                   </div>
                   <div className="dropdown d-flex flex-column col-lg-2">
                     <label htmlFor="">Select By Anchor</label>

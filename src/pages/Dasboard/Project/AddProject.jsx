@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Spinner from 'react-bootstrap/Spinner';
 
 function AddProject() {
 
@@ -39,23 +40,23 @@ function AddProject() {
     formData.append("ProjectURL", projectUrl);
     formData.append("SitemapURL", sitemapURL);
     let parsedTags = [];
-      try {
-        if (typeof formData.anchorTags === "string") {
-          if (formData.anchorTags.startsWith("[")) {
-            parsedTags = JSON.parse(formData.anchorTags); // Proper JSON string
-          } else {
-            parsedTags = formData.anchorTags.split(','); // Comma-separated string
-          }
+    try {
+      if (typeof formData.anchorTags === "string") {
+        if (formData.anchorTags.startsWith("[")) {
+          parsedTags = JSON.parse(formData.anchorTags); // Proper JSON string
         } else {
-          parsedTags = formData.anchorTags;
+          parsedTags = formData.anchorTags.split(','); // Comma-separated string
         }
-      } catch (err) {
-        console.error("Failed to parse anchorTags: ", err);
-        parsedTags = [];
+      } else {
+        parsedTags = formData.anchorTags;
       }
-      anchorTags.forEach(tag => {
-        formData.append("AnchorTags", tag);
-      })
+    } catch (err) {
+      console.error("Failed to parse anchorTags: ", err);
+      parsedTags = [];
+    }
+    anchorTags.forEach(tag => {
+      formData.append("AnchorTags", tag);
+    })
     console.log(anchorTags);
 
     // console.log("Sending data:", Object.fromEntries(formData.entries()));
@@ -81,8 +82,8 @@ function AddProject() {
   }
   // fetch Sitemap URL from api
   const fetchSitemapURL = async () => {
+    setIsLoading(true);
     try {
-
       const response = await axios.get(`http://207.180.203.98:5030/api/projects/pages/${sitemapURL}`, {
         headers: {
           "Accept": "*/*",
@@ -97,6 +98,8 @@ function AddProject() {
       setTimeout(() => {
         setError("");
       }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   }
   // for type tags in input fields
@@ -150,7 +153,11 @@ function AddProject() {
             <label htmlFor="FetchedPages">Fetched Pages</label>
             <div className=' form-label'>
               {isLoading ? (
-                <div className="spinner-border text-primary" role="status"></div>
+                <div className='text-center mt-4'>
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
               ) : (
                 urls.length > 0 ? (
                   urls.map((url, index) => (

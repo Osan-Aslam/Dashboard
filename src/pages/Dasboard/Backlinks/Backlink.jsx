@@ -11,6 +11,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import axios from 'axios'
 import { Dropdown } from 'react-bootstrap';
 import $ from "jquery";
+import Spinner from 'react-bootstrap/Spinner';
 
 function Backlink() {
   const [backlinks, setBacklinks] = useState([]);
@@ -19,13 +20,14 @@ function Backlink() {
   const [selectedSort, setSelectedSort] = useState('Low to high price');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const [isLoading, setIsLoading] = useState(true);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
 
   // Fetch Backlinks from api
   useEffect(() => {
+    setIsLoading(true);
     const fetchBacklinks = async () => {
       try {
         const response = await axios.get(`http://207.180.203.98:5030/api/Backlinks`, {
@@ -36,6 +38,7 @@ function Backlink() {
         // console.log("Fetched backlinks:", response.data);
         setBacklinks(response.data);
         setFilteredBacklinks(response.data)
+        setIsLoading(false);
       } catch (error) {
         console.log("Error fetching backlinks:", error);
       }
@@ -114,7 +117,6 @@ function Backlink() {
   // Filters for backlinks 
   const applyFilters = (filterValues) => {
     setFilters(filterValues);
-
     let filtered = [...backlinks];
 
     if (filterValues.dealType) {
@@ -231,7 +233,7 @@ function Backlink() {
         });
       }
     }
-
+    
     console.log("Filtered Results:", filtered);
     setFilteredBacklinks(filtered);
   };
@@ -295,7 +297,15 @@ function Backlink() {
             </tr>
           </thead>
           <tbody className='backlinks'>
-            {
+            {isLoading ? (
+              <tr>
+                <td colSpan="10" className="text-center">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </td>
+              </tr>
+            ) : (
               sortedBacklinks.length > 0 ? (
                 currentItems.map((backlink, index) => (
                   <tr key={index}>
@@ -356,7 +366,8 @@ function Backlink() {
                     <h5>No Backlinks Found</h5>
                   </td>
                 </tr>
-              )}
+              )
+            )}
           </tbody>
         </table>
         <div className='d-flex align-items-center justify-content-between flex-lg-row flex-column'>

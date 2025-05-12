@@ -320,6 +320,7 @@ form .signin-btn:hover {
   text-decoration: none;
   line-height: 18px;
   color: #005CCC;
+  font-weight: 400;
 }
 
 .table .btn,
@@ -508,10 +509,12 @@ form .signin-btn:hover {
   border-radius: 2px;
   color: #000;
   margin: 2px 2px;
+  font-weight: 500;
 }
 
 .backlinks td {
-  font-size: 11px;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .table td {
@@ -708,9 +711,10 @@ form .signin-btn:hover {
   border: 2px solid #dc3545 !important;
 }
 
-.card-body .userin{
+.card-body .userin {
   background-color: #0c8ce9 !important;
 }
+
 @media screen and (max-width: 992px) {
   .tab-pane .dashboard {
     display: grid;
@@ -728,8 +732,8 @@ form .signin-btn:hover {
     position: static;
     width: 35%;
   }
-  
-  .navbar-toggler .bars{
+
+  .navbar-toggler .bars {
     font-size: 25px;
   }
 

@@ -30,10 +30,7 @@ function Project() {
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
-  const paginatedProjects = filteredProjects.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedProjects = filteredProjects.slice( (currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // fetch all projects from api
   useState(() => {
@@ -275,12 +272,7 @@ function Project() {
           </div>
         </div>
       </div>
-      <Modal
-        show={show}
-        onHide={handleDeleteCancel}
-        backdrop="static"
-        keyboard={false}
-      >
+      <Modal show={show} onHide={handleDeleteCancel} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Delete</Modal.Title>
         </Modal.Header>

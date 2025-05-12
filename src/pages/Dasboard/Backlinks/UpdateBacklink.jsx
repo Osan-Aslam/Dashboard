@@ -84,7 +84,7 @@ function UpdateBacklink() {
 	}, [id]);
 
 
-  // submit form and update them
+	// submit form and update them
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!LiveLink || !LiveLink.startsWith("http")) {
@@ -188,7 +188,7 @@ function UpdateBacklink() {
 			}, 3000);
 		}
 	}
-//  fetch teamMembers from api
+	//  fetch teamMembers from api
 	useEffect(() => {
 		const fetchMembers = async () => {
 			try {
@@ -241,13 +241,27 @@ function UpdateBacklink() {
 		}))
 	];
 
+	useEffect(() => {
+		if (projects.length > 0 && selectedProject) {
+			const selectedProj = projects.find(p => p.projectName === selectedProject);
+			if (selectedProj) {
+				handleSelect(selectedProj);
+				fetchSitemapURL(selectedProj);
+			}
+		}
+	}, [projects, selectedProject]);
+
+
 	const handleChange = (selectedOption) => {
 		setSelectedProject(selectedOption.label);
 		if (selectedOption.label !== 'All') {
-			handleSelect(projects.find(p => p.projectName === selectedOption.label));
-			fetchSitemapURL(projects.find(p => p.projectName === selectedOption.label));
+			const selectedProj = projects.find(p => p.projectName === selectedOption.label);
+			handleSelect(selectedProj);
+			fetchSitemapURL(selectedProj);
 		}
 	};
+
+
 
 	const urlOptions = urls.length > 0
 		? urls.map(url => ({ value: url, label: url }))
@@ -323,11 +337,11 @@ function UpdateBacklink() {
 										<label htmlFor="">Select Project</label>
 										<FaCircleXmark onClick={() => removeRow(row.id)} className='cross d-lg-none' />
 									</div>
-									<Select className='selectDropdown' options={projectOptions} onChange={handleChange} value={{ label: selectedProject, value: selectedProject }} classNamePrefix="select" />
+									<Select className='selectDropdown' options={projectOptions} onChange={handleChange} value={{ label: selectedProject, value: selectedProject }} classNamePrefix="select"/>
 								</div>
 								<div className="dropdown d-flex flex-column col-lg-4">
 									<label htmlFor="">Select Sub Page</label>
-									<Select className='selectDropdown' options={urlOptions} onChange={handleUrlChange} value={selectedUrl ? { value: selectedUrl, label: selectedUrl } : null} placeholder="Select Sub Page" classNamePrefix="select" />
+									<Select className='selectDropdown' options={urlOptions} onChange={handleUrlChange} value={selectedUrl ? { value: selectedUrl, label: selectedUrl } : null} placeholder="Select Sub Page" classNamePrefix="select"/>
 								</div>
 								<div className="dropdown d-flex flex-column col-lg-4">
 									<div className='d-flex justify-content-between'>
